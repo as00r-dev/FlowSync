@@ -7,3 +7,5 @@
 2. **Project Structure Change**: The project structure will be reorganized to follow Next.js conventions, moving from a traditional Express.js backend/frontend separation to a Next.js monorepo structure with API routes.
 
 3. **Implementation Approach Change**: Instead of implementing a separate Express.js server, we'll use Next.js API routes for the backend functionality, which is more aligned with modern full-stack React development practices.
+
+4. **Architecture Structure Change**: The user has pointed out that the directory structure does not follow proper separation of concerns. The project structure will be reorganized to have a clear separation between frontend and backend code, as specified in the technical proposal document.
