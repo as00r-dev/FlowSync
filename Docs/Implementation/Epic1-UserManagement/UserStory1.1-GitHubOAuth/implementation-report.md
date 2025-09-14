@@ -45,6 +45,37 @@ This report summarizes the implementation of User Story 1.1: "As a new user, I w
 - **Database**: PostgreSQL
 - **Authentication**: GitHub OAuth 2.0
 
+## Project Structure
+```
+frontend/
+├── app/
+│   ├── api/
+│   │   └── auth/
+│   │       ├── github/
+│   │       │   └── route.ts          # GitHub OAuth initiation
+│   │       └── logout/
+│   │           └── route.ts          # Logout endpoint
+│   ├── dashboard/
+│   │   └── page.tsx                  # Dashboard page
+│   ├── lib/
+│   │   ├── db/
+│   │   │   ├── connection.ts         # Database connection
+│   │   │   ├── user.ts               # User model
+│   │   │   ├── session.ts            # Session model
+│   │   │   └── init.ts               # Database initialization
+│   │   ├── config.ts                 # Configuration
+│   │   ├── session.ts                # Session management
+│   │   └── auth.ts                   # Authentication utilities
+│   ├── page.tsx                      # Landing page
+│   └── layout.tsx                    # Root layout
+├── components/                       # React components
+├── styles/                           # Global styles
+└── public/                           # Static assets
+
+backend/                              # Legacy backend directory (not currently used)
+Docs/                                 # Project documentation
+```
+
 ## Database Schema
 
 ### Users Table
@@ -70,20 +101,55 @@ This report summarizes the implementation of User Story 1.1: "As a new user, I w
 - user_agent (TEXT)
 
 ## Files Created
-- Next.js API routes for authentication
-- Database models for users and sessions
-- Session management utilities
-- Frontend pages (landing page, dashboard)
-- Configuration files
+- Next.js API routes for authentication (`frontend/app/api/auth/`)
+- Database models for users and sessions (`frontend/app/lib/db/`)
+- Session management utilities (`frontend/app/lib/session.ts`)
+- Frontend pages (landing page, dashboard) (`frontend/app/page.tsx`, `frontend/app/dashboard/page.tsx`)
+- Configuration files (`frontend/app/lib/config.ts`)
 - Documentation files
 - Test files
 
-## Testing
-- Manual testing of OAuth flow with valid GitHub credentials
-- Verification of user account creation in PostgreSQL
-- Session management testing
-- Error handling verification
-- Route protection testing
+## Setup Instructions
+
+1. **Install dependencies**:
+   ```bash
+   npm install
+   ```
+
+2. **Set up environment variables**:
+   Copy `.env.example` to `.env.local` and fill in the required values:
+   ```
+   GITHUB_CLIENT_ID=your_github_client_id
+   GITHUB_CLIENT_SECRET=your_github_client_secret
+   GITHUB_CALLBACK_URL=http://localhost:3000/api/auth/github/callback
+   DB_HOST=localhost
+   DB_PORT=5432
+   DB_NAME=flowsync
+   DB_USER=flowsync_user
+   DB_PASSWORD=flowsync_password
+   SESSION_SECRET=your_session_secret_key
+   ```
+
+3. **Set up PostgreSQL database**:
+   Create a database and user:
+   ```sql
+   CREATE DATABASE flowsync;
+   CREATE USER flowsync_user WITH PASSWORD 'flowsync_password';
+   GRANT ALL PRIVILEGES ON DATABASE flowsync TO flowsync_user;
+   ```
+
+4. **Initialize database tables**:
+   ```bash
+   npm run db:init
+   ```
+
+5. **Run the development server**:
+   ```bash
+   npm run dev
+   ```
+
+6. **Open the application**:
+   Visit `http://localhost:3000` in your browser.
 
 ## Known Limitations
 - CSRF protection is not fully implemented

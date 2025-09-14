@@ -8,30 +8,9 @@ This is the implementation of User Story 1.1: As a new user, I want to sign up u
 - **Backend**: Next.js API Routes, PostgreSQL
 - **Authentication**: GitHub OAuth 2.0
 
-## Project Structure
+## Quick Setup
 
-```
-app/
-├── api/
-│   └── auth/
-│       ├── github/
-│       │   └── route.ts          # GitHub OAuth initiation
-│       └── github/
-│           └── callback/
-│               └── route.ts      # GitHub OAuth callback
-├── components/                   # React components
-├── lib/                          # Business logic and utilities
-│   ├── db/                       # Database models
-│   ├── config.ts                 # Configuration
-│   ├── session.ts                # Session management
-│   └── auth.ts                   # Authentication utilities
-├── styles/                       # Global styles
-├── page.tsx                      # Landing page
-└── dashboard/
-    └── page.tsx                  # Dashboard page
-```
-
-## Setup Instructions
+For detailed setup instructions, see [SETUP.md](SETUP.md).
 
 1. **Install dependencies**:
    ```bash
@@ -39,26 +18,55 @@ app/
    ```
 
 2. **Set up environment variables**:
-   Copy `.env.example` to `.env.local` and fill in the required values:
-   ```
-   GITHUB_CLIENT_ID=your_github_client_id
-   GITHUB_CLIENT_SECRET=your_github_client_secret
-   GITHUB_CALLBACK_URL=http://localhost:3000/api/auth/github/callback
-   DB_HOST=localhost
-   DB_PORT=5432
-   DB_NAME=flowsync
-   DB_USER=flowsync_user
-   DB_PASSWORD=flowsync_password
-   SESSION_SECRET=your_session_secret_key
+   Copy `.env.example` to `.env.local` and fill in the required values.
+
+3. **Set up PostgreSQL database**:
+   Create a database and user with the credentials specified in `.env.local`.
+
+4. **Initialize database tables**:
+   ```bash
+   npm run db:init
    ```
 
-3. **Run the development server**:
+5. **Run the development server**:
    ```bash
    npm run dev
    ```
 
-4. **Open the application**:
+6. **Open the application**:
    Visit `http://localhost:3000` in your browser.
+
+## Project Structure
+
+```
+frontend/
+├── app/
+│   ├── api/
+│   │   └── auth/
+│   │       ├── github/
+│   │       │   └── route.ts          # GitHub OAuth initiation
+│   │       └── logout/
+│   │           └── route.ts          # Logout endpoint
+│   ├── dashboard/
+│   │   └── page.tsx                  # Dashboard page
+│   ├── lib/
+│   │   ├── db/
+│   │   │   ├── connection.ts         # Database connection
+│   │   │   ├── user.ts               # User model
+│   │   │   ├── session.ts            # Session model
+│   │   │   └── init.ts               # Database initialization
+│   │   ├── config.ts                 # Configuration
+│   │   ├── session.ts                # Session management
+│   │   └── auth.ts                   # Authentication utilities
+│   ├── page.tsx                      # Landing page
+│   └── layout.tsx                    # Root layout
+├── components/                       # React components
+├── styles/                           # Global styles
+└── public/                           # Static assets
+
+backend/                              # Legacy backend directory (not currently used)
+Docs/                                 # Project documentation
+```
 
 ## Database Schema
 
