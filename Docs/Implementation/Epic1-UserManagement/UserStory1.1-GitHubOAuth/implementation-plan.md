@@ -6,7 +6,7 @@
 - [x] Completed
 
 ## Phase 1: Architecture Design
-- [x] Design OAuth flow architecture
+- [x] Design OAuth flow architecture for Next.js
 - [x] Define user data model in PostgreSQL
 - [x] Plan session management approach
 - [x] Identify required GitHub OAuth endpoints
@@ -14,13 +14,13 @@
 ## Phase 2: Backend Implementation
 - [x] Set up PostgreSQL database connection
 - [x] Create User model in PostgreSQL
-- [x] Implement GitHub OAuth endpoints
+- [x] Implement GitHub OAuth endpoints using Next.js API routes
 - [x] Implement session management
 - [x] Create user account creation logic
 - [x] Handle OAuth callback and user creation
 
 ## Phase 3: Frontend Implementation
-- [x] Create landing page with GitHub OAuth button
+- [x] Create landing page with GitHub OAuth button using Next.js and Tailwind CSS
 - [x] Implement redirect to GitHub OAuth screen
 - [x] Handle successful authentication redirect
 - [x] Display user-friendly error messages for OAuth failures
