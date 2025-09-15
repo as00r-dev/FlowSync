@@ -1,0 +1,1 @@
+{"status":307,"headers":{"location":"https://github.com/login/oauth/authorize?client_id=&redirect_uri=http://localhost:4000/auth/github/callback&scope=user:email","x-next-cache-tags":"_N_T_/layout,_N_T_/api/layout,_N_T_/api/auth/layout,_N_T_/api/auth/github/layout,_N_T_/api/auth/github/route,_N_T_/api/auth/github"}}

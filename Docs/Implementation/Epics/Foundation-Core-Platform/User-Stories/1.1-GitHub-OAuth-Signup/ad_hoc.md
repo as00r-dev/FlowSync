@@ -14,6 +14,15 @@ This file will track any ad hoc decisions, change requests, or unexpected issues
 ## GitHub OAuth Configuration
 
 - GitHub OAuth URLs clarified:
-  - Homepage URL: `http://localhost:5173`
-  - Authorization callback URL: `http://localhost:4000/auth/github/callback`
+  - Homepage URL: `http://localhost:3000`
+  - Authorization callback URL: `http://localhost:3000/api/auth/github/callback`
 - These URLs should be used when configuring the GitHub OAuth App
+
+## Next.js Implementation
+
+- Replaced SvelteKit frontend with Next.js 14+ App Router as specified in updated technical proposal
+- Implemented App Router structure with route groups for dashboard
+- Created API routes for authentication endpoints
+- Implemented client-side hooks for authentication state management
+- Configured Tailwind CSS for styling
+- Set up proper TypeScript configuration for Next.js
