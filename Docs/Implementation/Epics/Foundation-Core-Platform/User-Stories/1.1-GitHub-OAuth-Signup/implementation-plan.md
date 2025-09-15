@@ -6,14 +6,14 @@
 - [ ] Completed
 
 ## Implementation Tasks
-- [ ] Set up GitHub OAuth application credentials
+- [x] Set up GitHub OAuth application credentials
 - [x] Create authentication API endpoints in api-gateway
-- [ ] Implement OAuth flow with GitHub
-- [ ] Create user model in PostgreSQL
-- [ ] Handle session management
-- [ ] Build signup/login UI components in web-app
-- [ ] Implement error handling for OAuth failures
-- [ ] Test end-to-end OAuth flow
+- [x] Implement OAuth flow with GitHub
+- [x] Create user model in PostgreSQL
+- [x] Handle session management
+- [x] Build signup/login UI components in web-app
+- [x] Implement error handling for OAuth failures
+- [x] Test end-to-end OAuth flow
 - [ ] Document API endpoints
 
 ## Testing Tasks
