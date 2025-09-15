@@ -13,7 +13,7 @@ FlowSync AI eliminates manual status reporting and provides verifiable insights 
 - **Metadata & Audit Log**: PostgreSQL
 - **Caching**: Redis
 - **Data Processing/ML**: Python
-- **Frontend**: SvelteKit
+- **Frontend**: Next.js 14+ (App Router)
 - **API Layer**: GraphQL (Apollo Server)
 - **Infrastructure**: Kubernetes (EKS/GKE)
 - **Message Queue**: Kafka
@@ -50,14 +50,16 @@ This is a monorepo organized into the following directories:
    
    For GitHub OAuth, you'll need to:
    - Create a GitHub OAuth App at https://github.com/settings/developers
-   - Set Homepage URL to `http://localhost:5173`
-   - Set Authorization callback URL to `http://localhost:4000/auth/github/callback`
+   - Set Homepage URL to `http://localhost:3000`
+   - Set Authorization callback URL to `http://localhost:3000/api/auth/github/callback`
    - Update the `GITHUB_CLIENT_ID` and `GITHUB_CLIENT_SECRET` in your `.env` file
 
 4. Run the development server:
    ```bash
    npm run dev
    ```
+   
+   The Next.js frontend will be available at `http://localhost:3000`
 
 ## Documentation
 
