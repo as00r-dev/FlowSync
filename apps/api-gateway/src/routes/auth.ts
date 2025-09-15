@@ -40,7 +40,7 @@ router.get('/github/callback', async (req, res) => {
     
     // Redirect to frontend with error parameter
     const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:5173';
-    res.redirect(`${frontendUrl}?error=oauth_failed&message=${encodeURIComponent(error.message)}`);
+    res.redirect(`${frontendUrl}?error=oauth_failed&message=${encodeURIComponent(error.message || 'Unknown error')}`);
   }
 });
 

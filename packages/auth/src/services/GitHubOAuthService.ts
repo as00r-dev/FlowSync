@@ -16,7 +16,7 @@ export class GitHubOAuthService {
   constructor() {
     this.clientId = process.env.GITHUB_CLIENT_ID || '';
     this.clientSecret = process.env.GITHUB_CLIENT_SECRET || '';
-    this.redirectUri = process.env.GITHUB_REDIRECT_URI || 'http://localhost:5173/auth/callback';
+    this.redirectUri = process.env.GITHUB_REDIRECT_URI || 'http://localhost:4000/auth/github/callback';
   }
 
   /**
