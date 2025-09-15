@@ -52,9 +52,21 @@ export class GitHubOAuthService {
       }
 
       return response.data.access_token;
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error exchanging code for token:', error);
-      throw new Error('Failed to exchange code for token');
+      
+      // Handle specific error cases
+      if (error.response) {
+        // The request was made and the server responded with a status code
+        // that falls out of the range of 2xx
+        throw new Error(`GitHub API error: ${error.response.status} - ${error.response.statusText}`);
+      } else if (error.request) {
+        // The request was made but no response was received
+        throw new Error('No response received from GitHub API');
+      } else {
+        // Something happened in setting up the request that triggered an Error
+        throw new Error(`Error setting up request: ${error.message}`);
+      }
     }
   }
 
@@ -75,9 +87,26 @@ export class GitHubOAuthService {
         email: response.data.email,
         avatar_url: response.data.avatar_url,
       };
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error fetching user info:', error);
-      throw new Error('Failed to fetch user information from GitHub');
+      
+      // Handle specific error cases
+      if (error.response) {
+        // The request was made and the server responded with a status code
+        // that falls out of the range of 2xx
+        if (error.response.status === 401) {
+          throw new Error('Invalid access token');
+        } else if (error.response.status === 403) {
+          throw new Error('Access to GitHub API forbidden');
+        }
+        throw new Error(`GitHub API error: ${error.response.status} - ${error.response.statusText}`);
+      } else if (error.request) {
+        // The request was made but no response was received
+        throw new Error('No response received from GitHub API');
+      } else {
+        // Something happened in setting up the request that triggered an Error
+        throw new Error(`Error setting up request: ${error.message}`);
+      }
     }
   }
 
@@ -85,29 +114,34 @@ export class GitHubOAuthService {
    * Handle the OAuth callback and create/update user
    */
   async handleOAuthCallback(code: string): Promise<User> {
-    // Exchange code for access token
-    const accessToken = await this.exchangeCodeForToken(code);
-    
-    // Get user information from GitHub
-    const githubUser = await this.getUserInfo(accessToken);
-    
-    // Check if user already exists
-    let user = await UserModel.findByGithubId(githubUser.id);
-    
-    if (user) {
-      // Update existing user
-      // In a real implementation, we would update the user's information
-      return user;
-    } else {
-      // Create new user
-      user = await UserModel.create({
-        github_id: githubUser.id,
-        username: githubUser.login,
-        email: githubUser.email,
-        avatar_url: githubUser.avatar_url,
-      });
+    try {
+      // Exchange code for access token
+      const accessToken = await this.exchangeCodeForToken(code);
       
-      return user;
+      // Get user information from GitHub
+      const githubUser = await this.getUserInfo(accessToken);
+      
+      // Check if user already exists
+      let user = await UserModel.findByGithubId(githubUser.id);
+      
+      if (user) {
+        // Update existing user
+        // In a real implementation, we would update the user's information
+        return user;
+      } else {
+        // Create new user
+        user = await UserModel.create({
+          github_id: githubUser.id,
+          username: githubUser.login,
+          email: githubUser.email,
+          avatar_url: githubUser.avatar_url,
+        });
+        
+        return user;
+      }
+    } catch (error) {
+      console.error('Error handling OAuth callback:', error);
+      throw error;
     }
   }
 }

@@ -10,9 +10,9 @@ router.get('/github', (req, res) => {
   try {
     const authorizationUrl = githubOAuthService.getAuthorizationUrl();
     res.redirect(authorizationUrl);
-  } catch (error) {
+  } catch (error: any) {
     console.error('Error initiating GitHub OAuth:', error);
-    res.status(500).json({ error: 'Failed to initiate GitHub OAuth' });
+    res.status(500).json({ error: 'Failed to initiate GitHub OAuth', details: error.message });
   }
 });
 
@@ -35,9 +35,12 @@ router.get('/github/callback', async (req, res) => {
     // Redirect to frontend app
     const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:5173';
     res.redirect(frontendUrl);
-  } catch (error) {
+  } catch (error: any) {
     console.error('Error handling GitHub OAuth callback:', error);
-    res.status(500).json({ error: 'Failed to authenticate with GitHub' });
+    
+    // Redirect to frontend with error parameter
+    const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:5173';
+    res.redirect(`${frontendUrl}?error=oauth_failed&message=${encodeURIComponent(error.message)}`);
   }
 });
 
