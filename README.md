@@ -42,7 +42,19 @@ This is a monorepo organized into the following directories:
    docker-compose up -d
    ```
 
-3. Run the development server:
+3. Configure environment variables:
+   Copy the `.env.example` file to `.env` and update the values as needed:
+   ```bash
+   cp .env.example .env
+   ```
+   
+   For GitHub OAuth, you'll need to:
+   - Create a GitHub OAuth App at https://github.com/settings/developers
+   - Set Homepage URL to `http://localhost:5173`
+   - Set Authorization callback URL to `http://localhost:4000/auth/github/callback`
+   - Update the `GITHUB_CLIENT_ID` and `GITHUB_CLIENT_SECRET` in your `.env` file
+
+4. Run the development server:
    ```bash
    npm run dev
    ```
