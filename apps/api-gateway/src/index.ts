@@ -1,8 +1,24 @@
 import express from 'express';
 import { ApolloServer } from 'apollo-server-express';
 import { ApolloServerPluginLandingPageLocalDefault } from 'apollo-server-core';
+import { initializeDatabase } from '@flowsync/database';
+import { sessionMiddleware } from './middleware/session';
+import authRoutes from './routes/auth';
+
+// Initialize database
+initializeDatabase().catch(error => {
+  console.error('Failed to initialize database:', error);
+  process.exit(1);
+});
 
 const app = express();
+
+// Middleware
+app.use(express.json());
+app.use(sessionMiddleware);
+
+// Authentication routes
+app.use('/auth', authRoutes);
 
 // Placeholder for GraphQL schema
 const typeDefs = `#graphql
@@ -23,6 +39,13 @@ async function startApolloServer() {
     typeDefs,
     resolvers,
     plugins: [ApolloServerPluginLandingPageLocalDefault()],
+    context: ({ req }) => {
+      // Pass session data to GraphQL context
+      return {
+        user: (req.session as any)?.user,
+        userId: (req.session as any)?.userId,
+      };
+    },
   });
 
   await server.start();
