@@ -74,6 +74,161 @@ flowchart TD
 | **Message Queue** | Kafka | Decouples event ingestion from processing, ensuring resilience during load spikes. Perfect for event sourcing. |
 | **Monitoring** | Prometheus, Grafana, ELK Stack | Metrics collection, visualization, and logging. |
 
+### **FlowSync AI Monorepo Structure Proposal**
+
+Based on the technical architecture and project requirements, here's a comprehensive folder structure with proper separation of concerns:
+
+```
+flowsync-ai-monorepo/
+├── 📁 apps
+│   ├── 📁 api-gateway                 # GraphQL API gateway
+│   │   ├── src/
+│   │   │   ├── resolvers/             # GraphQL resolvers
+│   │   │   ├── schema/                # GraphQL schema definitions
+│   │   │   ├── middleware/            # Auth, rate limiting, etc.
+│   │   │   └── index.ts
+│   │   ├── package.json
+│   │   └── Dockerfile
+│   ├── 📁 context-worker              # Async event processing
+│   │   ├── src/
+│   │   │   ├── processors/            # Event processors
+│   │   │   ├── lib/
+│   │   │   └── index.ts
+│   │   ├── package.json
+│   │   └── Dockerfile
+│   ├── 📁 manual-event-gateway        # HTTP gateway for manual events
+│   │   ├── src/
+│   │   │   ├── routes/                # HTTP route handlers
+│   │   │   ├── middleware/
+│   │   │   └── index.ts
+│   │   ├── package.json
+│   │   └── Dockerfile
+│   ├── 📁 slack-bot                   # Slack integration service
+│   │   ├── src/
+│   │   │   ├── commands/              # Slash command handlers
+│   │   │   ├── events/                # Slack event handlers
+│   │   │   └── index.ts
+│   │   ├── package.json
+│   │   └── Dockerfile
+│   └── 📁 web-app                     # SvelteKit frontend
+│       ├── src/
+│       │   ├── routes/                # Page routes
+│       │   ├── lib/                   # Utilities, stores
+│       │   │   ├── stores/            # Svelte stores
+│       │   │   ├── components/        # Reusable components
+│       │   │   └── utils/             # Helper functions
+│       │   ├── styles/                # Global styles
+│       │   └── app.html
+│       ├── svelte.config.js
+│       ├── package.json
+│       └── Dockerfile
+├── 📁 packages                       # Shared internal libraries
+│   ├── 📁 common                     # Shared utilities and types
+│   │   ├── src/
+│   │   │   ├── types/                 # Shared TypeScript types
+│   │   │   ├── constants/             # App-wide constants
+│   │   │   └── utils/                 # Shared utilities
+│   │   └── package.json
+│   ├── 📁 database                   # Database clients and models
+│   │   ├── src/
+│   │   │   ├── neo4j/                 # Neo4j connection and queries
+│   │   │   ├── postgres/              # PostgreSQL client and models
+│   │   │   └── redis/                 # Redis client
+│   │   └── package.json
+│   ├── 📁 event-schemas              # Event schemas (Zod)
+│   │   ├── src/
+│   │   │   └── index.ts               # Zod schemas for all events
+│   │   └── package.json
+│   ├── 📁 graphql-client             # Generated GraphQL client
+│   │   ├── src/
+│   │   │   └── index.ts
+│   │   └── package.json
+│   └── 📁 ui-kit                     # Shared UI components
+│       ├── src/
+│       │   └── components/            # Reusable Svelte components
+│       ├── svelte.config.js
+│       └── package.json
+├── 📁 libs
+│   └── 📁 confidence-engine          # Python confidence scoring
+│       ├── src/
+│       │   └── flowsync/
+│       │       └── confidence/
+│       │           ├── scorer.py      # Confidence scoring logic
+│       │           └── models.py      # Data models
+│       ├── tests/
+│       ├── pyproject.toml
+│       └── Dockerfile
+├── 📁 infrastructure
+│   ├── 📁 kubernetes                # K8s manifests
+│   │   ├── base/                    # Common base resources
+│   │   ├── overlays/                # Environment-specific configs
+│   │   │   ├── development/
+│   │   │   └── production/
+│   │   └── kustomization.yml
+│   ├── 📁 terraform                 # Terraform configs
+│   │   ├── modules/                 # Reusable modules
+│   │   ├── environments/            # Environment-specific configs
+│   │   │   ├── dev/
+│   │   │   └── prod/
+│   │   └── main.tf                  # Root module
+│   └── 📁 monitoring                # Monitoring configs
+│       ├── prometheus/              # Prometheus configs
+│       └── grafana/                 # Grafana dashboards
+├── 📁 docs
+│   ├── ADRs/                        # Architecture Decision Records
+│   ├── api-specification/           # OpenAPI specs, GraphQL schema
+│   ├── onboarding.md                # Developer onboarding guide
+│   └── deployment.md                # Deployment procedures
+├── 📁 scripts
+│   ├── deploy/                      # Deployment scripts
+│   ├── dev/                         # Development scripts
+│   └── migration/                   # Database migration scripts
+├── docker-compose.yml               # Local development environment
+├── package.json                     # Root package.json (for workspaces)
+├── turbo.json                       # Turborepo configuration
+├── .github/                         # GitHub workflows
+│   └── workflows/
+│       ├── ci.yml
+│       └── cd.yml
+├── .gitignore
+└── README.md
+```
+
+### **Key Separation of Concerns**
+
+1. **Application Layer Separation:**
+   - Each runnable service is in its own directory under `/apps`
+   - Clear boundaries between API gateway, workers, and frontend
+
+2. **Shared Code Organization:**
+   - Reusable libraries are in `/packages` with clear responsibilities
+   - Type definitions, database clients, and event schemas are shared across services
+
+3. **Language Separation:**
+   - Node.js/TypeScript applications in `/apps` and `/packages`
+   - Python data processing in `/libs` with its own dependency management
+
+4. **Infrastructure as Code:**
+   - Kubernetes manifests, Terraform configs, and monitoring setup in `/infrastructure`
+   - Environment-specific configurations separated from base definitions
+
+5. **Documentation and Scripts:**
+   - Architecture decisions, API specs, and onboarding docs in `/docs`
+   - Utility scripts for development, deployment, and migrations in `/scripts`
+
+6. **Development Workflow:**
+   - Turborepo for efficient monorepo task execution
+   - Docker Compose for local development environment
+   - GitHub Actions for CI/CD workflows
+
+This structure ensures:
+- Clear boundaries between services and shared code
+- Independent deployment of services
+- Easy navigation and onboarding for new developers
+- Scalable organization as the codebase grows
+- Proper separation of concerns between different parts of the system
+
+
 ## **4. Key Technical Components & Features**
 
 ### **4.1. Manual Event Hub**
