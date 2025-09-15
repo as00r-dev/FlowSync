@@ -1,4 +1,4 @@
-import express from 'express';
+import express, { Application } from 'express';
 import { ApolloServer } from 'apollo-server-express';
 import { ApolloServerPluginLandingPageLocalDefault } from 'apollo-server-core';
 import { initializeDatabase } from '@flowsync/database';
@@ -11,7 +11,7 @@ initializeDatabase().catch(error => {
   process.exit(1);
 });
 
-const app = express();
+const app: Application = express();
 
 // Middleware
 app.use(express.json());

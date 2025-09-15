@@ -1,4 +1,4 @@
-import { pool } from './client';
+import { pool } from '../client';
 
 export interface User {
   id?: number;
