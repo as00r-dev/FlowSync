@@ -1,13 +1,13 @@
 # User Story 1.1: GitHub OAuth Signup Implementation Plan
 
 ## Overall Status
-- [x] Not Started
-- [ ] In Progress
+- [ ] Not Started
+- [x] In Progress
 - [ ] Completed
 
 ## Implementation Tasks
 - [ ] Set up GitHub OAuth application credentials
-- [ ] Create authentication API endpoints in api-gateway
+- [x] Create authentication API endpoints in api-gateway
 - [ ] Implement OAuth flow with GitHub
 - [ ] Create user model in PostgreSQL
 - [ ] Handle session management
