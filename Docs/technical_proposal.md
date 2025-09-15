@@ -1,176 +1,198 @@
-# Technical Scoping & Architecture Proposal
+# **Technical Proposal: FlowSync AI v1.3**
+**Date:** October 29, 2024
+**Status:** Final
+**Objective:** To define the technical architecture and implementation plan for FlowSync AI, an enterprise-wide coordination layer that integrates both automated and manual signals to provide verifiable, role-specific insights across engineering, design, and business teams.
 
-## Overview
-Based on the FlowSync AI PRD, we're building a context-aware engineering intelligence platform that automates status updates while maintaining verifiable provenance and uncertainty boundaries. The system will process signals from multiple development tools, build a comprehensive context graph, and deliver role-specific insights through various interfaces.
+---
 
-## Proposed System Architecture
+## **1. Overview**
 
-### High-Level System Components
-```
-┌─────────────────────────────────────────────────────────────┐
-│                   External Integrations                      │
-│  ┌───────────┐  ┌──────────┐  ┌──────────┐  ┌────────────┐  │
-│  │ GitHub    │  │ Jira     │  │ CI/CD    │  │ Figma/     │  │
-│  │ GitLab    │  │ Linear   │  │ Systems  │  │ Sentry     │  │
-│  └───────────┘  └──────────┘  └──────────┘  └────────────┘  │
-│                   │            │            │               │
-└───────────────────┼────────────┼────────────┼───────────────┘
-                    │            │            │
-┌─────────────────────────────────────────────────────────────┐
-│                FlowSync AI Core Platform                    │
-│  ┌───────────────────────────────────────────────────────┐  │
-│  │               Integration Gateway                      │  │
-│  │  - Webhook receivers & API clients                    │  │
-│  │  - Rate limiting & authentication                     │  │
-│  │  - Signal validation & normalization                  │  │
-│  └───────────────────────────────────────────────────────┘  │
-│                              │                              │
-│  ┌───────────────────────────────────────────────────────┐  │
-│  │           Integration Health Monitor                  │  │
-│  │  - Real-time sync status dashboard                   │  │
-│  │  - Alerting (5% failure threshold)                   │  │
-│  │  - Event ordering validation                         │  │
-│  └───────────────────────────────────────────────────────┘  │
-│                              │                              │
-│  ┌───────────────────────────────────────────────────────┐  │
-│  │             Context Processing Engine                 │  │
-│  │  - Signal enrichment & correlation                   │  │
-│  │  - Confidence scoring (60-80% bands)                 │  │
-│  │  - GDPR anonymization protocol                       │  │
-│  └───────────────────────────────────────────────────────┘  │
-│                              │                              │
-│  ┌───────────────────────────────────────────────────────┐  │
-│  │               Context Graph (Neo4j)                   │  │
-│  │  - Relationship storage & querying                   │  │
-│  │  - Materialized views for roles                      │  │
-│  │  - Query cost estimation & degradation               │  │
-│  └───────────────────────────────────────────────────────┘  │
-│                  │                 │                        │
-│  ┌───────────────┴─────┐ ┌─────────┴─────────────────────┐  │
-│  │ Redis Cache Layer   │ │ PostgreSQL (Metadata & Users)│  │
-│  └─────────────────────┘ └──────────────────────────────┘  │
-│                  │                 │                        │
-└──────────────────┼─────────────────┼────────────────────────┘
-                   │                 │
-┌──────────────────┼─────────────────┼────────────────────────┐
-│     Output Services                │                        │
-│  ┌───────────────┴─────┐ ┌─────────┴─────────────────────┐  │
-│  │   Chatbot Service   │ │   Digest Service             │  │
-│  │ - RAG with citations│ │ - Slack/email generation     │  │
-│  │ - Confidence display│ │ - Role-specific formatting   │  │
-│  └─────────────────────┘ └──────────────────────────────┘  │
-│                                                            │
-│  ┌───────────────────────────────────────────────────────┐  │
-│  │         Admin & Monitoring Dashboard                  │  │
-│  │ - Trust scoring alerts                               │  │
-│  │ - GDPR compliance tools                             │  │
-│  │ - Performance metrics                               │  │
-│  └───────────────────────────────────────────────────────┘  │
-└─────────────────────────────────────────────────────────────┘
+FlowSync AI is a context-aware engineering intelligence platform that processes signals from development tools, design systems, and manual human input to build a real-time, connected graph of work across the entire product organization. Its core value is eliminating manual status reporting and providing verifiable insights through a proactive chatbot and automated digests, while explicitly supporting non-CI/CD environments and extending value to non-engineering teams.
+
+## **2. High-Level System Architecture**
+
+The architecture is built around a **Event-Driven, Graph-Centric** design that treats manual and automated signals with equal importance.
+
+```mermaid
+flowchart TD
+    subgraph ExternalSystems [External Systems - Signal Sources]
+        G[GitHub/GitLab]
+        J[Jira/Linear]
+        F[Figma]
+        C[Confluence/Docs]
+    end
+
+    subgraph ManualEvents [Manual Event Hub]
+        S[Slack/MS Teams<br>Slash Commands]
+        W[Web UI Event Reporter]
+        E[Email-in Endpoint]
+    end
+
+    G & J & F & C --> A[API Gateway]
+    S & W & E --> M[Manual Event Gateway]
+
+    subgraph FlowSyncCore [FlowSync AI Core Platform]
+        A --> Q[Message Queue<br/>Kafka]
+        M --> Q
+        
+        Q --> CP[Context Processor<br/>Node.js]
+        CP --> Anon[Anonymization Module<br/>SHA-256 Hashing]
+        CP --> CS[Confidence Scorer<br/>Python]
+        
+        CP --> CG[Context Graph Engine<br/>Neo4j]
+        CG --> RC[Redis Cache<br/>Materialized Views]
+        CG --> PS[(PostgreSQL<br/>Audit Log & Metadata)]
+    end
+
+    subgraph OutputServices [Output Services]
+        CG --> BS[Background Services]
+        BS --> SM[Slack/Email Digest Service]
+        BS --> FR[Finance Report Generator]
+        
+        CG --> GQL[GraphQL API]
+        GQL --> WebApp[SvelteKit Web Application]
+        GQL --> ChatBot[Chatbot Service]
+    end
+
+    WebApp --> U[User Browser]
+    ChatBot --> U
+    SM --> U[Slack/Email]
 ```
 
-### Integration Patterns
-- **Webhook-based ingestion** for GitHub/GitLab/CI systems
-- **API polling** for Jira/Linear with incremental sync
-- **Tag-based processing** for Figma/Sentry (#flowsync tags)
-- **Event-driven architecture** using message queue for async processing
+## **3. Detailed Tech Stack & Justification**
 
-## Tech Stack
+| **Component** | **Technology** | **Justification** |
+| :--- | :--- | :--- |
+| **API & Event Processing** | Node.js (TypeScript) | Superior async handling for high volumes of webhook events and manual inputs. Strong typing for complex data structures. |
+| **Context Graph** | Neo4j | Native graph database optimized for traversing complex relationships between commits, PRs, tickets, designs, and people. |
+| **Metadata & Audit Log** | PostgreSQL | Strong relational data integrity for user data, audit trails, and immutable logs. |
+| **Caching** | Redis | Low-latency caching for frequent graph queries and session storage. |
+| **Data Processing/ML** | Python | For confidence scoring, NLP for communication analysis, and data analysis libraries (Pandas, NumPy). |
+| **Frontend** | SvelteKit | Excellent performance characteristics ideal for a data-dashboard application. Superior developer experience. |
+| **API Layer** | GraphQL (Apollo Server) | Efficient data fetching for complex graph data, allowing clients to request exactly what they need. |
+| **Infrastructure** | Kubernetes (EKS/GKE) | Orchestration for scalable, resilient deployment of microservices. |
+| **Message Queue** | Kafka | Decouples event ingestion from processing, ensuring resilience during load spikes. Perfect for event sourcing. |
+| **Monitoring** | Prometheus, Grafana, ELK Stack | Metrics collection, visualization, and logging. |
 
-### Backend Services
-- **Node.js/Typescript** - Real-time features, async processing, and strong typing for complex data structures
-- **Python** - For data science components (confidence scoring, causal analysis)
-- **Neo4j** - Graph database for relationship-heavy context data with native graph algorithms
-- **PostgreSQL** - Relational data for users, metadata, and audit trails with strong consistency
-- **Redis** - Caching layer for frequent graph queries and session management
+## **4. Key Technical Components & Features**
 
-### Infrastructure
-- **Kubernetes** - Container orchestration for scalable, resilient deployment
-- **RabbitMQ/Kafka** - Message queue for async event processing
-- **Elasticsearch** - For chatbot semantic search and log aggregation
-- **Prometheus/Grafana** - Monitoring and alerting
+### **4.1. Manual Event Hub**
+*   **Function:** Provides first-class API for human-reported events through multiple channels.
+*   **Components:**
+    *   Slack/MS Teams slash command handler (`/flowsync start [ticket]`, `/flowsync deploy [ticket]`)
+    *   Web UI for event reporting
+    *   Email-in endpoint for legacy workflows
+*   **Provenance Tracking:** All manual events receive a `source: manual_user_report` tag and are stored with full audit trail.
 
-### Frontend
-- **React/TypeScript** - Component-based UI with strong typing
-- **GraphQL** - Efficient data fetching for complex graph data
-- **Cypress** - End-to-end testing for critical user flows
+### **4.2. Context Processing Engine**
+*   **Function:** Ingests and correlates events from both automated and manual sources.
+*   **Handling Signal Ambiguity:** Uses weighted algorithm to cross-reference signals:
+    *   Branch name patterns (`feature/PROJ-123`)
+    *   Code diffs (files changed)
+    *   Linked tickets
+    *   Manual event reports
+    *   Design file tags
+*   **Output:** Emits enriched "Context Events" with confidence scores and provenance metadata.
 
-### Justifications
-- **Node.js** chosen for excellent async capabilities handling numerous webhook connections
-- **Neo4j** selected for native graph processing capabilities essential for context relationships
-- **PostgreSQL** ensures ACID compliance for user data and audit requirements
-- **Python** utilized for its robust data science libraries for confidence scoring algorithms
+### **4.3. Extended Ecosystem Integrations**
+*   **Figma Integration:** API listener for `#flowsync` tags in design files; automatically links designs to tickets/PRs.
+*   **Confluence/Docs Integration:** Scans for `#flowsync` tags in documentation; connects content to features.
+*   **Finance Reporting Engine:** Generates capitalization reports from verifiable engineering activity data.
 
-## Dependencies
+### **4.4. Confidence Scoring Service (Python)**
+*   **Function:** Calculates confidence ranges for all assertions based on signal quality and source reliability.
+*   **Rules Engine:** Manual events have different confidence weighting than automated signals.
+*   **Output:** Confidence bands (e.g., 60-80%) for all AI-generated insights.
 
-### Internal Dependencies
-1. **Authentication Service v2** - Required for OAuth and user management
-2. **Billing API** - Needed for tier-based feature access (Team/Business/Enterprise)
-3. **Notification Service** - For alerting and digest delivery
-4. **Audit Logging Service** - For compliance and provenance tracking
+### **4.5. The Context Graph (Neo4j) Schema**
+*   **Nodes:** `User`, `Commit`, `PullRequest`, `JiraTicket`, `DesignFile`, `ContentDoc`, `DeploymentEvent`.
+*   **Relationships:** `AUTHORED_BY`, `LINKED_TO`, `DESIGNED_FOR`, `DOCUMENTS`, `DEPLOYS`.
+*   **Role-Based Views:** Materialized subgraphs pre-computed for different personas (Engineer, Designer, Product Manager).
 
-### External Dependencies
-1. **GitHub/GitLab APIs** - Core source of development signals
-2. **Jira/Linear APIs** - Project management integration
-3. **Slack/Microsoft Teams APIs** - Notification channels
-4. **Sentry/Figma APIs** - Additional context sources
-5. **SOC 2 Compliance Framework** - Required for enterprise tier
+### **4.6. The SvelteKit Web Application**
+*   **Pages:**
+    *   **Dashboard (Role-Specific):** Personalized views for Engineers, Designers, PMs.
+    *   **Manual Event Reporter:** Simple UI for reporting deployments and status changes.
+    *   **Project Health:** Drill-down views with confidence scores.
+    *   **Admin Guardrails:** Configuration for automation rules and confidence thresholds.
+    *   **Finance Portal:** Capitalization reports and engineering investment analytics.
 
-### Team Dependencies
-1. **Platform Team** - For Kubernetes infrastructure and monitoring
-2. **Auth Team** - For OAuth integration and user management
-3. **Frontend Team** - For admin dashboard implementation
-4. **Data Science Team** - For confidence scoring algorithms
+## **5. Data Flow for Key Scenarios**
 
-## Risks & Considerations
+### **5.1. Manual Deployment Reporting**
+1. Developer runs manual deployment script
+2. Developer sends Slack command: `/flowsync deploy PROJ-456 to production`
+3. Manual Event Gateway receives command, validates auth
+4. Event is placed in Kafka queue
+5. Context Processor enriches event with user, ticket, and code context
+6. Context Graph updates ticket status to "Done" with provenance tag
+7. Notification is sent to content team for documentation updates
+8. Finance system records time allocation for capitalization
 
-### Technical Risks
-1. **Graph Query Performance** - Complex traversals on large datasets (>1M nodes) may exceed latency targets
-   - Mitigation: Implement query cost estimation, caching strategy, and materialized views
+### **5.2. Design-Dev Handoff**
+1. Designer tags Figma frame: `#flowsync PROJ-789`
+2. Figma webhook sends update to API Gateway
+3. Context Processor links design to ticket PROJ-789
+4. When developer starts work on PROJ-789, designer gets automated notification
+5. When PR is created, design is automatically linked in PR description
 
-2. **Event Ordering Issues** - Out-of-sequence events from different sources could cause data inconsistency
-   - Mitigation: Implement vector clocks or hybrid logical clocks for event ordering
+## **6. Implementation Phasing**
 
-3. **Third-Party API Reliability** - Dependency on external APIs introduces failure points
-   - Mitigation: Implement circuit breakers, retry policies, and graceful degradation
+### **Phase 1: Core Platform & Manual Event Hub (v0.5 - MVP)**
+*   Context Graph with GitHub/Jira integration
+*   Manual Event Hub (Slack commands + Web UI)
+*   Basic confidence scoring
+*   Daily digest generation
+*   SvelteKit dashboard for engineers and PMs
 
-### Scalability Challenges
-1. **Data Volume** - Enterprise customers may generate millions of events daily
-   - Solution: Sharding strategy for Neo4j, partitioning in PostgreSQL
+### **Phase 2: Extended Ecosystem & Refinement (v1.0 - GA)**
+*   Figma integration for design teams
+*   Confluence/Docs integration for content teams
+*   Enhanced trust framework with admin guardrails
+*   Finance reporting foundation
+*   GDPR-compliant data model
 
-2. **Real-time Processing** - High webhook volume during peak development hours
-   - Solution: Auto-scaling consumer groups with message queue backpressure
+### **Phase 3: Advanced Intelligence (v1.5+)**
+*   Predictive analytics for project timelines
+*   Advanced chatbot with causal reasoning
+*   Team health and skill gap analysis
+*   Custom plugin framework for enterprise integrations
 
-3. **Chatbot Query Load** - Concurrent users asking complex graph queries
-   - Solution: Query caching, rate limiting, and query complexity limits
+## **7. Dependencies**
 
-### Security Considerations
-1. **Data Privacy** - GDPR compliance requires careful handling of personal data
-   - Implementation: Irreversible hashing protocol for personal identifiers
+1.  **Internal:**
+    *   Authentication Service v2 (OAuth management for multiple platforms).
+    *   Billing API (for tier-based feature access).
+2.  **External:**
+    *   GitHub/GitLab, Jira/Linear, Figma, Slack/MS Teams API reliability.
+    *   SOC 2 Compliance Framework for enterprise tier.
+3.  **Team:**
+    *   Data Science expertise for refining the confidence scoring algorithm.
+    *   Frontend expertise for SvelteKit and responsive design.
+    *   Platform team for Kubernetes infrastructure.
 
-2. **API Security** - Multiple integration points increase attack surface
-   - Implementation: Strict input validation, rate limiting, and regular security audits
+## **8. Risks & Mitigations**
 
-3. **Access Control** - Role-based data access must be strictly enforced
-   - Implementation: Attribute-based access control for graph data queries
+| **Risk** | **Mitigation Strategy** |
+| :--- | :--- |
+| **Manual Event Verification** | Implement reputation scoring for users; require secondary confirmation for critical actions; maintain full audit trail. |
+| **Extended Ecosystem API Limits** | Implement aggressive caching and webhook-based updates instead of polling where possible. |
+| **Data Schema Complexity** | Invest in initial schema design; use migration scripts for incremental changes; implement strict versioning. |
+| **Cross-Team Adoption** | Provide immediate value to each team individually; create role-specific onboarding flows; showcase wins from early adopters. |
+| **Performance at Scale** | Implement query cost estimation in Neo4j; use materialized views; employ Redis caching strategically. |
 
-4. **Audit Trail** - All AI assertions must be traceable to source data
-   - Implementation: Immutable audit log with cryptographic signing
+## **9. Success Metrics**
 
-### Compliance Requirements
-1. **GDPR Article 35** - Data Protection Impact Assessment required
-   - Action: Engage privacy counsel early for architecture review
+| **Metric** | **Target** | **Measurement Method** |
+| :--- | :--- | :--- |
+| **Manual Event Processing Time** | < 100ms | End-to-end latency monitoring |
+| **Context Graph Query Performance** | < 1s at 1M nodes | Load testing and performance profiling |
+| **Event Processing Accuracy** | > 99.9% | Comparison with ground truth data |
+| **Cross-Team Adoption Rate** | > 30% of company | Active users by department |
+| **User Satisfaction Score** | > 4.5/5.0 | Quarterly user surveys |
 
-2. **SOC 2 Type II** - Enterprise customers will require compliance
-   - Action: Implement necessary controls for security, availability, processing integrity
+---
+**Approval:**
 
-3. **Data Residency** - Potential need for region-specific data storage
-   - Consideration: Multi-region deployment strategy for enterprise tier
-
-### Implementation Phasing
-Recommend breaking implementation into phases aligned with the product roadmap:
-1. **Phase 1 (v0.5)**: Core GitHub integration + basic digest generation
-2. **Phase 2 (v1.0)**: Additional integrations + confidence scoring + GDPR compliance
-3. **Phase 3 (v2.0)**: Advanced chatbot + causal engine + enterprise features
-
-This phased approach allows for validation of core architecture before scaling complexity and ensures we meet the critical v1.0 verification requirements for latency, accuracy, and compliance.
+Technical Lead: _________________________
+Date: ___________________________________
