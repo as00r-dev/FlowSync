@@ -2,8 +2,8 @@
 
 ## Overall Status
 - [ ] Not Started
-- [x] In Progress
-- [ ] Completed
+- [ ] In Progress
+- [x] Completed
 
 ## Implementation Tasks
 - [x] Set up GitHub OAuth application credentials
@@ -14,7 +14,7 @@
 - [x] Build signup/login UI components in web-app
 - [x] Implement error handling for OAuth failures
 - [x] Test end-to-end OAuth flow
-- [ ] Document API endpoints
+- [x] Document API endpoints
 
 ## Testing Tasks
 - [ ] Unit tests for authentication service
