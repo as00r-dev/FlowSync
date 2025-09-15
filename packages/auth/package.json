@@ -10,14 +10,16 @@
     "test:config": "ts-node src/test-config.ts"
   },
   "dependencies": {
-    "jsonwebtoken": "^9.0.0",
+    "@flowsync/database": "*",
     "axios": "^1.4.0",
-    "@flowsync/database": "*"
+    "dotenv": "^17.2.2",
+    "jsonwebtoken": "^9.0.0"
   },
   "devDependencies": {
-    "@types/jsonwebtoken": "^9.0.0",
     "@types/axios": "^0.14.0",
-    "typescript": "^5.0.0",
-    "ts-node": "^10.9.0"
+    "@types/dotenv": "^6.1.1",
+    "@types/jsonwebtoken": "^9.0.0",
+    "ts-node": "^10.9.0",
+    "typescript": "^5.0.0"
   }
 }
