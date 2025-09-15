@@ -10,3 +10,10 @@ This file will track any ad hoc decisions, change requests, or unexpected issues
 - Will use the apps/web-app directory for frontend components
 - Will use the apps/api-gateway for authentication endpoints
 - User data will be stored in PostgreSQL as specified in the technical proposal
+
+## GitHub OAuth Configuration
+
+- GitHub OAuth URLs clarified:
+  - Homepage URL: `http://localhost:5173`
+  - Authorization callback URL: `http://localhost:4000/auth/github/callback`
+- These URLs should be used when configuring the GitHub OAuth App
