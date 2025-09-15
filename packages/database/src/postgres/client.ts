@@ -29,10 +29,20 @@ export async function initializeDatabase() {
       )
     `);
     
+    // Create sessions table for session management
+    await client.query(`
+      CREATE TABLE IF NOT EXISTS sessions (
+        sid VARCHAR(128) PRIMARY KEY,
+        sess JSON NOT NULL,
+        expire TIMESTAMP(6) WITH TIME ZONE NOT NULL
+      )
+    `);
+    
     // Create indexes
     await client.query(`
       CREATE INDEX IF NOT EXISTS idx_users_github_id ON users(github_id);
       CREATE INDEX IF NOT EXISTS idx_users_username ON users(username);
+      CREATE INDEX IF NOT EXISTS idx_sessions_expire ON sessions(expire);
     `);
     
     console.log('Database initialized successfully');
