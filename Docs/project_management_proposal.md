@@ -1,122 +1,157 @@
-Of course. As the Agile Project Manager for FlowSync AI, I have synthesized the PRD, Technical Plan, and Design Plan into an actionable project backlog.
+# **Project Backlog & Sprint 0 Plan: FlowSync AI (v1.3)**
 
-***
+## **Epics, User Stories & Acceptance Criteria**
 
-## **Project Backlog & Sprint 0 Plan: FlowSync AI**
-
-### **Epics, User Stories & Acceptance Criteria**
-
-**Epic 1: User Management & Core Platform Setup**
-*   **Description:** Establish the foundational user, authentication, and project management capabilities required for all other features.
+**Epic 1: Foundation & Core Platform**
+*   **Description:** Establish the foundational infrastructure, user management, and core data models for the entire platform.
 *   **Priority:** Must Have (MVP)
 
-**Epic 2: GitHub Integration & Signal Processing**
-*   **Description:** Ingest, validate, and process development signals from GitHub to build the initial context graph.
+**Epic 2: Manual Event Hub**
+*   **Description:** Implement the primary human-in-the-loop interface, allowing users across all functions to report status manually via multiple channels.
 *   **Priority:** Must Have (MVP)
 
-**Epic 3: Automated Standup Digest Generation & Delivery**
-*   **Description:** The core value proposition of v0.5 - automatically generating and sending a useful status digest.
+**Epic 3: GitHub Integration & Automated Signal Processing**
+*   **Description:** Ingest, validate, and process development signals from GitHub to build the technical side of the context graph.
 *   **Priority:** Must Have (MVP)
 
-**Epic 4: Web Application & Dashboard**
-*   **Description:** Provide a web-based UI for users to view details, manage settings, and see more than the digest offers.
+**Epic 4: Universal Activity Feed & Dashboard**
+*   **Description:** Create the primary web UI for viewing the cross-functional activity feed and project status.
 *   **Priority:** Must Have (MVP)
 
-**Epic 5: Onboarding & Activation Flow**
-*   **Description:** Guide a new user from sign-up to their first moment of value (receiving a digest).
+**Epic 5: Cross-Functional Onboarding & Activation**
+*   **Description:** Guide users of all roles from sign-up to their first moment of value (reporting or receiving status).
 *   **Priority:** Must Have (MVP)
 
-**Epic 6: Foundational Confidence Scoring**
-*   **Description:** Implement the basic framework for calculating and displaying confidence levels on assertions.
+**Epic 6: Basic Confidence Scoring & Provenance**
+*   **Description:** Implement the foundational framework for calculating, storing, and displaying confidence levels and source provenance on all data.
 *   **Priority:** Should Have (v1.0)
 
-**Epic 7: Integration Health Monitoring**
-*   **Description:** Allow admins to monitor the status and health of all connected integrations.
+**Epic 7: Admin Guardrails & Configuration**
+*   **Description:** Provide administrators with the tools to configure automation rules and confidence thresholds.
 *   **Priority:** Could Have (v1.0)
 
 ---
-*(Note: Epics for Jira/Linear, Advanced Chatbot, GDPR, and Advanced Safeguards are out of scope for the initial backlog and are planned for v1.0+)*
+*(Note: Epics for Jira/Linear, Figma, Confluence, Finance Reporting, and Advanced Chatbot are planned for later versions.)*
 ---
 
-**User Stories & Acceptance Criteria:**
+### **User Stories & Acceptance Criteria**
 
-**Epic 1: User Management & Core Platform Setup**
-*   **User Story 1.1:** As a new user, I want to sign up using my GitHub OAuth account so that I don't have to create and remember another password.
+**Epic 1: Foundation & Core Platform**
+*   **User Story 1.1:** As a new user, I want to sign up using my GitHub OAuth account so that I don't have to create a new password.
     *   **AC1:** Given I am on the landing page, when I click "Sign up with GitHub", I am redirected to GitHub's OAuth screen.
     *   **AC2:** Given I successfully authenticate with GitHub, my user account is created in PostgreSQL, and I am logged into the FlowSync AI web app.
-*   **User Story 1.2:** As a logged-in user, I want to create a new "Project" to represent the team or codebase I want to monitor.
-    *   **AC1:** Given I am on the dashboard, I can click a "New Project" button, provide a name and description, and save it.
-    *   **AC2:** Upon creation, the project is stored in the database and I am set as its admin.
+*   **User Story 1.2:** As a logged-in user, I want to create a new "Project" to represent a team, epic, or initiative I want to monitor.
+    *   **AC1:** Given I am on the dashboard, I can click a "New Project" button, provide a name, description, and a unique `#tag`, and save it.
+    *   **AC2:** Upon creation, the project is stored in the database, I am set as its admin, and the `#tag` is available for use in manual reports.
+*   **User Story 1.3:** As the system, I want all events to be processed asynchronously via a message queue to ensure resilience and scalability.
+    *   **AC1:** Given any event (webhook or manual), it is placed into a Kafka topic.
+    *   **AC2:** A separate consumer service processes events from the topic and writes them to the database and graph.
 
-**Epic 2: GitHub Integration & Signal Processing**
-*   **User Story 2.1:** As a project admin, I want to connect my GitHub repository to my FlowSync project so that it can start receiving development signals.
+**Epic 2: Manual Event Hub**
+*   **User Story 2.1:** As any user, I want to report my status by sending a Slack slash command (`/flowsync [message]`) so it's quick and frictionless.
+    *   **AC1:** Given I am in a connected Slack workspace, when I type `/flowsync Finished the login page mockups #project-alpha`, the command is received by our API.
+    *   **AC2:** The system validates my identity and replies instantly in the thread with "✅ Status received."
+    *   **AC3:** The message and its `#project-alpha` tag are parsed and placed in the message queue for processing.
+*   **User Story 2.2:** As a user without Slack, I want to report my status via a simple form in the web app.
+    *   **AC1:** Given I am logged into the web app, I can click a "+ Report Status" button.
+    *   **AC2:** A modal opens with a text input and a suggester for existing project `#tags`.
+    *   **AC3:** When I submit, the event is treated identically to a Slack-sourced event.
+*   **User Story 2.3:** As the system, I want to store all manual events with a `source: manual_user_report` provenance tag and a full audit trail.
+    *   **AC1:** Given a manual event is processed, a `ManualEvent` node is created in Neo4j with properties: `userId`, `source` (`slack`/`web`), `message`, `timestamp`.
+    *   **AC2:** This node is linked to any `Project` node via the parsed `#tag`.
+
+**Epic 3: GitHub Integration & Automated Signal Processing**
+*   **User Story 3.1:** As a project admin, I want to connect my GitHub repository to my FlowSync project.
     *   **AC1:** Given I am in the project settings, I can see an "Integrations" section with a "Connect GitHub" button.
-    *   **AC2:** When I click it, I am guided through an OAuth flow to install a GitHub app (or connect an account) and select a specific repository.
-    *   **AC3:** Upon success, the integration's status is shown as "Active" in the settings, and a webhook is created on the GitHub repository.
-*   **User Story 2.2:** As the system, I want to receive GitHub webhooks for PR events (open, close, merge, comment) so I can update the context graph.
-    *   **AC1:** Given a webhook is received from GitHub, the payload is validated and authenticated.
-    *   **AC2:** The relevant event data (PR ID, author, state, timestamp) is parsed and placed into a message queue for async processing.
-    *   **AC3:** A worker consumes the message and creates or updates corresponding nodes (User, PullRequest) and relationships in the Neo4j graph.
+    *   **AC2:** When I click it, I am guided through an OAuth flow to install a GitHub app and select a repository.
+*   **User Story 3.2:** As the system, I want to receive GitHub webhooks for PR events and create corresponding nodes in the graph.
+    *   **AC1:** Given a webhook for a `pull_request` event is received, a `PullRequest` node is created/updated in Neo4j with key properties (`title`, `state`, `number`, `url`).
+    *   **AC2:** The `PullRequest` node is linked to a `User` node (author) and to any `Project` node mentioned in the PR title or branch name (e.g., `feat/PROJ-123` links to `#PROJ-123`).
 
-**Epic 3: Automated Standup Digest Generation & Delivery**
-*   **User Story 3.1:** As the system, I want to generate a daily digest of project status based on the context graph.
-    *   **AC1:** Given a scheduled trigger (e.g., every 24 hours), the system queries the graph for all PRs and their states from the last 24 hours.
-    *   **AC2:** The system formats this data into a structured text summary, grouping items by author or status (e.g., "Merged", "In Review", "Open").
-*   **User Story 3.2:** As a user, I want to receive the daily digest in a Slack channel so I don't have to open another app.
-    *   **AC1:** Given a project has a connected Slack channel, when the digest is generated, it is posted to that channel via the Slack API.
-    *   **AC2:** The message is formatted using Slack blocks and is clearly identifiable as coming from FlowSync AI.
+**Epic 4: Universal Activity Feed & Dashboard**
+*   **User Story 4.1:** As a user, I want to see a unified activity feed that combines manual reports and automated events from all my projects.
+    *   **AC1:** Given I am on the dashboard, I see a chronological feed of events.
+    *   **AC2:** Each event card is visually distinct based on its source (Manual vs. GitHub).
+    *   **AC3:** I can filter the feed by source (All, Manual, GitHub) and by project `#tag`.
+*   **User Story 4.2:** As a user, I want to view a status page for a specific project that aggregates all its related activity.
+    *   **AC1:** Given I click on a project name or `#tag`, I am taken to a dedicated project page.
+    *   **AC2:** This page shows a filtered activity feed containing only events tagged with that project.
+    *   **AC3:** The page shows a summary of the project's current state (e.g., "Active", "No recent activity").
 
-**Epic 4: Web Application & Dashboard**
-*   **User Story 4.1:** As a user, I want to see a dashboard overview of my project's health and recent activity so I can get a quick status update.
-    *   **AC1:** Given I am logged in and navigate to a project, I see a list of the most recent Pull Requests and their statuses.
-    *   **AC2:** I see a summary card indicating the number of active PRs, merged PRs, etc.
-*   **User Story 4.2:** As a user, I want to click on a PR from the digest or dashboard to see detailed information and the source data it came from.
-    *   **AC1:** Given I am viewing a digest in Slack or the dashboard, I can click a link that takes me to a detail view for that specific PR.
-    *   **AC2:** The detail view shows all information from GitHub (title, author, link, status, comments) that was used to generate the summary.
+**Epic 5: Cross-Functional Onboarding & Activation**
+*   **User Story 5.1:** As a new user, I am asked for my role during onboarding so the experience can be tailored for me.
+    *   **AC1:** After sign-up, a screen prompts me to select my role (Engineer, Designer, Product Manager, Other).
+    *   **AC2:** My selection is stored in my user profile.
+*   **User Story 5.2:** As a new user, the onboarding flow guides me to immediately experience the core value of manual reporting.
+    *   **AC1:** After role selection, the onboarding wizard's first interactive step is to prompt me to report my status (either via a pre-filled Slack command instruction or the web form).
+    *   **AC2:** Upon completing this step, I see a confirmation explaining how this update will be shared with my team.
 
-**Epic 5: Onboarding & Activation Flow**
-*   **User Story 5.1:** As a new user, I want to be guided through the initial setup process after sign-up.
-    *   **AC1:** After sign-up, the user is presented with a modal or series of steps prompting them to 1) Create a Project, 2) Connect GitHub, 3) Connect Slack.
-    *   **AC2:** The progress is saved, and the user can exit and return later.
-*   **User Story 5.2:** As the system, I want to track when a user receives their first digest to measure activation.
-    *   **AC1:** Given a user has completed the onboarding steps, a metric is logged when the first digest is successfully sent to their Slack channel.
-    *   **AC2:** This metric is accessible for analytics to calculate the >40% activation rate target.
+**Epic 6: Basic Confidence Scoring & Provenance**
+*   **User Story 6.1:** As the system, I want to assign a default `confidence_score` of 100% to all manually reported events.
+    *   **AC1:** Every `ManualEvent` node created in the graph has a `confidence: 1.0` property.
+    *   **AC2:** This score is displayed on the event card in the web UI.
+*   **User Story 6.2:** As a user, I want to see the source of any information in the system.
+    *   **AC1:** Every event card in the activity feed displays a `Source` icon and label (e.g., `Slack Manual Report`, `GitHub`).
 
-### **Prioritized Backlog**
+## **Prioritized Backlog**
 
-**Theme: MVP (v0.5) - "Core Automated Digest"**
+**Theme: MVP (v0.5) - "The Human-in-the-Loop Coordination Layer"**
 *   **Must Haves:**
-    1.  User Story 1.1 (Sign up with GitHub OAuth)
-    2.  User Story 1.2 (Create a Project)
-    3.  User Story 2.1 (Connect GitHub Repo)
-    4.  User Story 2.2 (Process GitHub Webhooks -> Graph)
-    5.  User Story 3.1 (Generate Daily Digest from Graph)
-    6.  User Story 3.2 (Send Digest to Slack)
-    7.  User Story 5.1 (Guided Onboarding)
-    8.  User Story 4.1 (Basic Dashboard with PR List)
+    1.  Epic 1: All Stories (Foundation)
+    2.  Epic 2: User Stories 2.1, 2.2, 2.3 (Manual Event Hub)
+    3.  Epic 4: User Stories 4.1, 4.2 (Universal Feed & Project View)
+    4.  Epic 5: User Stories 5.1, 5.2 (Role-Based Onboarding)
+    5.  Epic 6: User Story 6.2 (Provenance UI)
 *   **Should Haves:**
-    1.  User Story 4.2 (PR Detail View with Source Links)
-    2.  User Story 5.2 (Track Activation Metric)
+    1.  Epic 3: User Stories 3.1, 3.2 (GitHub Integration - extends value but isn't the *first* step)
+    2.  Epic 6: User Story 6.1 (Confidence Scoring backend)
 *   **Could Haves:**
-    1.  *Stories from Epic 6 (Basic Confidence Scoring) would be here, but are deferred to v1.0 for this initial plan.*
+    1.  Epic 7: Admin Guardrails (defer until after initial user feedback)
 
-### **Suggested Sprint 1 Backlog (2-Week Cycle)**
+## **Suggested Sprint 1 Backlog (2-Week Cycle)**
 
-**Sprint Goal:** Establish the core platform and successfully receive the first webhook from GitHub.
+**Sprint Goal:** Enable a new user to sign up, create a project, and successfully report their status manually via the web UI, seeing their update in the activity feed.
 
-This sprint focuses on the absolute foundation: user auth, project context, and the first working integration. The "working software" at the end of this sprint will be a basic app that can connect to GitHub and log incoming webhooks.
+This sprint focuses on the new core paradigm: manual-first, human-in-the-loop status reporting. The "working software" is a functional web app centered around human communication, laying the foundation for later automation.
 
 1.  **User Story 1.1:** Sign up with GitHub OAuth.
-    *   **Tasks:** Implement OAuth flow with GitHub; Create user model in PostgreSQL; Handle session management.
+    *   **Tasks:** Implement OAuth flow with GitHub; Create user model in PostgreSQL; Handle session management. (Frontend & Backend)
 2.  **User Story 1.2:** Create a new Project.
-    *   **Tasks:** Create project model and API endpoints; Build basic UI form in React; Link project to user.
-3.  **User Story 2.1:** Connect my GitHub repository.
-    *   **Tasks:** Implement GitHub App installation/OAuth flow; Store integration metadata (repo name, installation ID); Update UI to show connection status.
-4.  **Infrastructure & Architecture:**
-    *   **Task:** Set up initial Kubernetes deployment with a Node.js API pod and PostgreSQL pod.
-    *   **Task:** Set up basic Neo4j instance (schema not required yet, just connection).
-    *   **Task:** Implement message queue (RabbitMQ) and a basic worker skeleton.
-    *   **Task:** Build webhook endpoint to receive GitHub events and place them on the message queue.
-    *   **Task:** Build a worker that consumes messages from the queue and simply logs them. (This validates the entire pipeline).
+    *   **Tasks:** Create project model and API endpoints; Build project creation UI in SvelteKit; Link project to user. (Backend & Frontend)
+3.  **User Story 2.2:** Report status via the Web UI.
+    *   **Tasks:** Build the "+ Report Status" button and modal component; Create API endpoint to receive manual events; Build the `TagInput` component with project tag suggestion. (Frontend & Backend)
+4.  **User Story 2.3:** Store manual events with provenance.
+    *   **Tasks:** Define the `ManualEvent` node schema in Neo4j; Create processor consumer for manual events from Kafka; Write event to Neo4j and link to Project/User. (Backend)
+5.  **User Story 4.1:** Universal Activity Feed.
+    *   **Tasks:** Create GraphQL query to fetch mixed event types; Build the `EventCard` component with `manual` variant; Build the filter bar for source and project. (Frontend & Backend)
+6.  **User Story 5.1 & 5.2:** Role-based onboarding that prompts manual report.
+    *   **Tasks:** Add `role` field to user model; Build onboarding wizard UI steps; Integrate the "Report Status" modal into the onboarding flow. (Frontend & Backend)
+7.  **Infrastructure:**
+    *   **Task:** Set up foundational SvelteKit app with routing and state management.
+    *   **Task:** Set up Neo4j and define initial schema.
+    *   **Task:** Set up Kafka for event processing.
 
-**Sprint 1 Outcome:** A user can sign up, create a project, connect a GitHub repo, and the system will log incoming webhook events to the console. This is a minimal but crucial vertical slice that de-risks the integration architecture.
+**Sprint 1 Outcome:** A user can sign up, tell the system they are a "Designer," create a "#login-redesign" project, use the web form to report "Started working on wireframes," and immediately see their update in the personal activity feed. This validates the new, broader vision immediately.
+
+## **Sprint 0 Plan (Pre-Development)**
+
+**Objective:** Finalize technical setup and design specifications to ensure Sprint 1 can begin efficiently.
+
+**Technical Tasks:**
+1.  Finalize and provision the development environment (Kubernetes cluster, Neo4j, Kafka, PostgreSQL instances).
+2.  Establish the base SvelteKit project structure and CI/CD pipeline.
+3.  Create detailed API specifications for the endpoints needed in Sprint 1 (Auth, Projects, Manual Events).
+4.  Finalize the Neo4j graph schema for Manual Events, Users, and Projects.
+
+**Design Tasks:**
+1.  Deliver high-fidelity mockups for all Sprint 1 UI components:
+    *   Onboarding flow with role selection
+    *   Dashboard with activity feed and filters
+    *   Project creation form
+    *   Manual Event reporting modal
+    *   Event Card components (Manual variant)
+2.  Finalize the design system components in Storybook (MUI base, custom `TagInput`, `EventCard`).
+
+**Stakeholder Alignment:**
+1.  Review the Sprint 1 goal and backlog with leadership to confirm alignment with the new strategic direction.
+2.  Present the Sprint 0 design mockups to a group of beta users (especially Designers/PMs) for early feedback on the manual reporting flow.
