@@ -6,7 +6,8 @@
   "types": "src/index.ts",
   "scripts": {
     "lint": "eslint .",
-    "test:oauth": "ts-node src/test.ts"
+    "test:oauth": "ts-node src/test.ts",
+    "test:config": "ts-node src/test-config.ts"
   },
   "dependencies": {
     "jsonwebtoken": "^9.0.0",
