@@ -15,11 +15,9 @@
     "sourceMap": true,
     "outDir": "./dist"
   },
+  "include": [],
   "exclude": [
     "node_modules",
-    "dist",
-    "apps",
-    "packages",
-    "libs"
+    "dist"
   ]
 }
