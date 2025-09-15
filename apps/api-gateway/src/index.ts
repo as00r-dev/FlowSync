@@ -49,7 +49,7 @@ async function startApolloServer() {
   });
 
   await server.start();
-  server.applyMiddleware({ app, path: '/graphql' });
+  server.applyMiddleware({ app: app as any, path: '/graphql' });
 
   const PORT = process.env.PORT || 4000;
   
