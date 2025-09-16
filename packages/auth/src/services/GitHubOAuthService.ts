@@ -1,5 +1,6 @@
 import axios from 'axios';
 import { UserModel, User } from '@flowsync/database';
+import { GITHUB_CLIENT_ID, GITHUB_CLIENT_SECRET, GITHUB_REDIRECT_URI } from '../utils/env';
 
 export interface GitHubUser {
   id: number;
@@ -14,9 +15,9 @@ export class GitHubOAuthService {
   private redirectUri: string;
 
   constructor() {
-    this.clientId = process.env.GITHUB_CLIENT_ID || '';
-    this.clientSecret = process.env.GITHUB_CLIENT_SECRET || '';
-    this.redirectUri = process.env.GITHUB_REDIRECT_URI || 'http://localhost:4000/auth/github/callback';
+    this.clientId = GITHUB_CLIENT_ID;
+    this.clientSecret = GITHUB_CLIENT_SECRET;
+    this.redirectUri = GITHUB_REDIRECT_URI;
   }
 
   /**

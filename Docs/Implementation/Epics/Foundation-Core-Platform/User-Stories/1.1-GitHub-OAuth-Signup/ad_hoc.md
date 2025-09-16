@@ -87,6 +87,18 @@ This file will track any ad hoc decisions, change requests, or unexpected issues
   3. Restarting the dev server which now correctly starts on port 3000
 - Added troubleshooting documentation for future reference
 
+## Dotenv Implementation Issue and Fix
+
+- Encountered issue where GitHub OAuth URL was missing client ID when users clicked "Sign in with GitHub"
+- Root cause was improper loading of environment variables in the Next.js application context
+- Fixed by:
+  1. Creating a `.env` file in the `apps/web-app/` directory with GitHub OAuth credentials
+  2. Creating an environment utility module (`packages/auth/src/utils/env.ts`) to provide robust access to environment variables
+  3. Updating the `GitHubOAuthService` to use the new environment utility
+  4. Adding proper exports in the auth package to make the environment utility available
+- Verified fix by running a test script that confirmed the GitHub OAuth URL now includes the client ID
+- Added comprehensive documentation and troubleshooting guide for future reference
+
 ## NPM Workspace Error and Service Startup Issues
 
 - Encountered npm workspace error: `npm error code ENOWORKSPACES` when running `npm run dev`
