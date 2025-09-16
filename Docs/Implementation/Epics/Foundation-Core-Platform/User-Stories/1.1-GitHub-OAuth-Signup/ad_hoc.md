@@ -87,29 +87,16 @@ This file will track any ad hoc decisions, change requests, or unexpected issues
   3. Restarting the dev server which now correctly starts on port 3000
 - Added troubleshooting documentation for future reference
 
-## Dotenv Implementation Issue and Fix
+## Project Configuration Updates for ES Modules
 
-- Encountered issue where GitHub OAuth URL was missing client ID when users clicked "Sign in with GitHub"
-- Root cause was improper loading of environment variables in the Next.js application context
-- Fixed by:
-  1. Creating a `.env` file in the `apps/web-app/` directory with GitHub OAuth credentials
-  2. Creating an environment utility module (`packages/auth/src/utils/env.ts`) to provide robust access to environment variables
-  3. Updating the `GitHubOAuthService` to use the new environment utility
-  4. Adding proper exports in the auth package to make the environment utility available
-- Verified fix by running a test script that confirmed the GitHub OAuth URL now includes the client ID
-- Added comprehensive documentation and troubleshooting guide for future reference
-
-## Dockerfile Implementation for Each App
-
-- Encountered issue where Dockerfiles were missing for apps as required by the technical proposal
-- Created Dockerfiles for each app as specified in the technical proposal:
-  1. Created `apps/web-app/Dockerfile` for the Next.js web application
-  2. Created `apps/api-gateway/Dockerfile` for the API gateway
-- Updated `docker-compose.yml` to use these Dockerfiles instead of pre-built images
-- Verified that the Dockerfiles build correctly with `docker-compose build`
-- Added proper multi-stage builds for optimal image sizes
-- Included proper environment variable configuration for all services
-- Added volume mounts for development mode to enable hot reloading
+- Updated project to use ES modules instead of CommonJS
+- Modified package.json files to include `"type": "module"` for all packages
+- Updated TypeScript configuration to use ESNext modules
+- Updated build scripts to properly handle ES module compilation
+- Modified import paths to use `.js` extensions as required by ES modules
+- Updated tsconfig.json files to include composite builds and references
+- Fixed database test script to use relative imports instead of package imports
+- Updated GitHub OAuth service to include better error handling and logging
 
 ## Next.js Dev Server Port Issue Resolution
 
@@ -122,6 +109,24 @@ This file will track any ad hoc decisions, change requests, or unexpected issues
 - Added comprehensive troubleshooting guide in `troubleshooting-port-issue.md`
 - Updated `ad_hoc.md` with detailed information about the port issue and fix
 - Created `port-issue-fix.md` with step-by-step instructions for resolving port issues
+
+## Docker Compose Configuration Updates
+
+- Updated Docker Compose configuration to use `docker compose` instead of `docker-compose`
+- Added `--build` flag to ensure fresh builds when starting services
+- Updated GitHub OAuth callback URL to use API Gateway port (4000) instead of web app port (3000)
+- Added proper environment variable configuration for all services
+- Ensured `docker-compose.yml` uses `env_file: ./.env` for services that need environment variables
+- Updated documentation to clarify that API Gateway runs on port 4000 and handles GitHub OAuth callbacks
+
+## GitHub OAuth Service Enhancements
+
+- Added comprehensive logging to GitHubOAuthService for debugging
+- Improved error handling with try/catch blocks for database operations
+- Updated GitHub redirect URI to correctly point to API Gateway endpoint
+- Added validation for GitHub user information before creating/updating users
+- Implemented better error messages for OAuth failures
+- Added debugging information to help troubleshoot OAuth issues
 
 ## NPM Workspace Error and Service Startup Issues
 
