@@ -2,11 +2,13 @@
   "name": "@flowsync/database",
   "version": "0.1.0",
   "private": true,
-  "main": "src/index.ts",
-  "types": "src/index.ts",
+  "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "scripts": {
+    "build": "tsc --module ESNext --outDir dist",
     "lint": "eslint .",
-    "test:db": "ts-node src/test.ts"
+    "test:db": "ts-node --esm src/test.ts"
   },
   "dependencies": {
     "pg": "^8.11.0",

@@ -126,23 +126,31 @@ export class GitHubOAuthService {
       
       // Get user information from GitHub
       const githubUser = await this.getUserInfo(accessToken);
-      
+      console.log('GitHub User Info:', githubUser);
+
       // Check if user already exists
       let user = await UserModel.findByGithubId(githubUser.id);
-      
+      console.log('User from DB (findByGithubId):', user);
+
       if (user) {
         // Update existing user
         // In a real implementation, we would update the user's information
         return user;
       } else {
         // Create new user
-        user = await UserModel.create({
-          github_id: githubUser.id,
-          username: githubUser.login,
-          email: githubUser.email,
-          avatar_url: githubUser.avatar_url,
-        });
-        
+        try {
+          user = await UserModel.create({
+            github_id: githubUser.id,
+            username: githubUser.login,
+            email: githubUser.email,
+            avatar_url: githubUser.avatar_url,
+          });
+          console.log('New User Created:', user);
+        } catch (dbError) {
+          console.error('Error creating user in database:', dbError);
+          throw dbError; // Re-throw to propagate
+        }
+
         return user;
       }
     } catch (error) {

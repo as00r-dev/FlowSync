@@ -1,4 +1,4 @@
-import { pool, initializeDatabase } from '@flowsync/database';
+import { pool, initializeDatabase } from './postgres';
 
 async function testDatabase() {
   try {
