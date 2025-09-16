@@ -17,11 +17,11 @@
 - [x] Document API endpoints
 
 ## Testing Tasks
-- [ ] Unit tests for authentication service
-- [ ] Integration tests for OAuth flow
-- [ ] UI tests for signup components
-- [ ] Error handling tests
+- [x] Unit tests for authentication service
+- [x] Integration tests for OAuth flow
+- [x] UI tests for signup components
+- [x] Error handling tests
 
 ## Documentation Tasks
-- [ ] Update API documentation
-- [ ] Add setup instructions for GitHub OAuth
+- [x] Update API documentation
+- [x] Add setup instructions for GitHub OAuth

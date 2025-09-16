@@ -41,3 +41,38 @@ This file will track any ad hoc decisions, change requests, or unexpected issues
   - `npm run docker:start` - Start services with proper error handling
   - `npm run db:setup` - Set up database for manual installation
 - Updated README.md with comprehensive setup instructions for both Docker and manual installation
+
+## Session Management Implementation
+
+- Implemented proper session management using PostgreSQL sessions table
+- Created session utilities in the auth package:
+  - `createSession` - Creates a new session for a user
+  - `getSession` - Retrieves a session by ID
+  - `deleteSession` - Deletes a session by ID
+  - `getUserFromSession` - Gets user information from a session
+- Updated API routes to use session management:
+  - `/api/auth/me` now properly returns user information based on session
+  - `/api/auth/logout` now properly destroys sessions and clears cookies
+  - `/api/auth/github/callback` now creates sessions and sets cookies after successful OAuth
+- Implemented middleware to protect routes and check authentication status
+- Updated frontend components to handle authentication properly:
+  - Home page redirects authenticated users to dashboard
+  - Dashboard page shows access denied message for unauthenticated users
+  - Added proper error handling for OAuth failures
+
+## Docker Kafka Configuration Issue and Fix
+
+- Encountered "ContainerConfig" KeyError when running `npm run docker:start`
+- Issue was caused by incorrect Kafka configuration using KRaft mode
+- Fixed by:
+  1. Switching from Kafka KRaft mode to traditional Zookeeper-based configuration
+  2. Using specific, compatible versions of Kafka (3.2.3) and Zookeeper (3.8)
+  3. Simplifying environment variables for proper configuration
+  4. Cleaning up all existing containers and volumes with `docker-compose down -v`
+- Verified all services are now working correctly:
+  - Kafka: Topic creation, message production and consumption working
+  - PostgreSQL: Database connectivity working
+  - Redis: Ping command working
+  - Neo4j: HTTP endpoint responding
+  - Zookeeper: Running and connected to Kafka
+- The `npm run docker:start` command now works without errors
