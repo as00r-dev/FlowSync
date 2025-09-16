@@ -1,0 +1,23 @@
+{
+  "name": "flowsync-ai",
+  "version": "0.1.0",
+  "private": true,
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "build": "turbo run build",
+    "dev": "turbo run dev",
+    "lint": "turbo run lint",
+    "test": "turbo run test",
+    "format": "prettier --write .",
+    "docker:check": "bash ./scripts/check-docker.sh",
+    "docker:start": "bash ./scripts/start-services.sh",
+    "db:setup": "bash ./scripts/setup-db.sh"
+  },
+  "devDependencies": {
+    "turbo": "^1.10.0",
+    "prettier": "^2.8.0"
+  }
+}

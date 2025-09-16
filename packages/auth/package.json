@@ -1,0 +1,29 @@
+{
+  "name": "@flowsync/auth",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc --module ESNext --outDir dist",
+    "lint": "eslint .",
+    "test:oauth": "ts-node --esm src/test.ts",
+    "test:config": "ts-node --esm src/test-config.ts"
+  },
+  "dependencies": {
+    "@flowsync/database": "*",
+    "@types/uuid": "^10.0.0",
+    "axios": "^1.4.0",
+    "dotenv": "^17.2.2",
+    "jsonwebtoken": "^9.0.0",
+    "uuid": "^9.0.1"
+  },
+  "devDependencies": {
+    "@types/axios": "^0.14.0",
+    "@types/dotenv": "^6.1.1",
+    "@types/jsonwebtoken": "^9.0.0",
+    "ts-node": "^10.9.0",
+    "typescript": "^5.0.0"
+  }
+}

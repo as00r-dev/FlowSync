@@ -1,0 +1,27 @@
+{
+  "name": "@flowsync/api-gateway",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "nodemon --exec \"node --loader ts-node/esm/transpile-only --no-warnings=ExperimentalWarning\" src/index.ts",
+    "build": "tsc -p tsconfig.build.json",
+    "start": "node dist/index.js",
+    "lint": "eslint ."
+  },
+  "dependencies": {
+    "express": "^4.18.0",
+    "express-session": "^1.17.0",
+    "graphql": "^16.6.0",
+    "apollo-server-express": "^3.12.0",
+    "@flowsync/auth": "*",
+    "@flowsync/database": "*"
+  },
+  "devDependencies": {
+    "@types/express": "^4.17.0",
+    "@types/express-session": "^1.17.0",
+    "@types/node": "^20.0.0",
+    "typescript": "^5.0.0",
+    "nodemon": "^2.0.0"
+  }
+}

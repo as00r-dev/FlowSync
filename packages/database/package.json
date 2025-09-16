@@ -1,0 +1,22 @@
+{
+  "name": "@flowsync/database",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc --module ESNext --outDir dist",
+    "lint": "eslint .",
+    "test:db": "ts-node --esm src/test.ts"
+  },
+  "dependencies": {
+    "pg": "^8.11.0",
+    "redis": "^4.6.7"
+  },
+  "devDependencies": {
+    "@types/pg": "^8.6.0",
+    "typescript": "^5.0.0",
+    "ts-node": "^10.9.0"
+  }
+}

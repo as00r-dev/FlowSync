@@ -44,6 +44,7 @@ Begin implementing the project according to the `project_management_proposal.md`
         - You MUST assess the impact on the current `implementation-plan.md`.
         - You MUST add the new required tasks as checklist items to the plan.
         - You MUST log the user's request and your assessment in the `ad_hoc.md` file.
+        - You MUST refer Context7 MCP.
         - You MUST then proceed with the updated plan.
     - **If the user says "ROLLBACK":**
         - You MUST execute `git revert` or `git reset` to the last known good commit (as specified by the user, e.g., "ROLLBACK to commit `a1b2c3d`", or by default, to the state before the current feature began).
@@ -53,6 +54,8 @@ Begin implementing the project according to the `project_management_proposal.md`
     - Once all items in a feature's `implementation-plan.md` are checked off:
         1.  Create a final `implementation-report.md` in the feature's folder, summarizing the work done.
         2.  Make a final commit for the feature (e.g., "feat: complete User Login implementation").
+        3.  If user gives yout further `CHANGE [request]`, Implement the change request and update `ad_hoc.md` file. 
+        4. NEVER create multiple `implementation-report.md` files, keep the single `implementation-report.md` file updated.
     - **THIS IS A STOPPING POINT.** You MUST now:
         - 1. Clearly announce that the feature is complete on the branch and provide a summary including the branch name and commit hash.
         - 2. **Prompt the user to submit a Pull Request (PR) for the current branch to the default branch (e.g., `main`).** Provide instructions if needed (e.g., via GitHub CLI or web interface).
@@ -70,4 +73,5 @@ Begin implementing the project according to the `project_management_proposal.md`
 4.  Output your understanding of the project's primary goal and the first Epic and User Story you will implement, based on the project management proposal.
 5.  Create the corresponding folder structure and the three initial documents for that first User Story.
 6.  Create a new branch for the first feature (e.g., `feature/onboarding/user-login`).
-7.  Ask the user: "I am ready to begin implementation for [Feature Name] on branch [branch name]. Should I `PROCEED`?"
+7.  Pull relevant documentations using Context7 MCP.
+8.  Ask the user: "I am ready to begin implementation for [Feature Name] on branch [branch name]. Should I `PROCEED`?"
