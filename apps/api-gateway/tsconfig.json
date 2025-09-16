@@ -10,5 +10,8 @@
   "references": [
     { "path": "../../packages/auth" },
     { "path": "../../packages/database" }
-  ]
+  ],
+  "ts-node": {
+    "require": ["tsconfig-paths/register"]
+  }
 }
