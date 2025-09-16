@@ -74,3 +74,6 @@ PORT=3001 npm run dev
 - This issue is more common on Linux systems where processes may not always terminate cleanly
 - Docker containers can also hold onto ports, so ensure containers are properly stopped if using Docker
 - IDEs or other development tools might spawn background processes that occupy ports
+
+## Resolution Status
+✅ Issue resolved: Killed orphaned next-server processes (PID 290939 and others) that were holding onto port 3000. After cleaning up these processes, the Next.js dev server now correctly starts on port 3000 as expected.
