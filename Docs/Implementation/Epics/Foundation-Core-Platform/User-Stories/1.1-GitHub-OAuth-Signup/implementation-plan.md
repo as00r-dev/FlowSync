@@ -15,6 +15,7 @@
 - [x] Implement error handling for OAuth failures
 - [x] Test end-to-end OAuth flow
 - [x] Document API endpoints
+- [x] Fix Next.js dev server port issue
 
 ## Testing Tasks
 - [x] Unit tests for authentication service
@@ -25,3 +26,4 @@
 ## Documentation Tasks
 - [x] Update API documentation
 - [x] Add setup instructions for GitHub OAuth
+- [x] Document troubleshooting for dev server port issues

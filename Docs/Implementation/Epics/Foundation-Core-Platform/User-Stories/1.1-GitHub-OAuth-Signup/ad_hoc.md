@@ -99,6 +99,30 @@ This file will track any ad hoc decisions, change requests, or unexpected issues
 - Verified fix by running a test script that confirmed the GitHub OAuth URL now includes the client ID
 - Added comprehensive documentation and troubleshooting guide for future reference
 
+## Dockerfile Implementation for Each App
+
+- Encountered issue where Dockerfiles were missing for apps as required by the technical proposal
+- Created Dockerfiles for each app as specified in the technical proposal:
+  1. Created `apps/web-app/Dockerfile` for the Next.js web application
+  2. Created `apps/api-gateway/Dockerfile` for the API gateway
+- Updated `docker-compose.yml` to use these Dockerfiles instead of pre-built images
+- Verified that the Dockerfiles build correctly with `docker-compose build`
+- Added proper multi-stage builds for optimal image sizes
+- Included proper environment variable configuration for all services
+- Added volume mounts for development mode to enable hot reloading
+
+## Next.js Dev Server Port Issue Resolution
+
+- Encountered persistent issue where `npm run dev` was starting on port 3004 instead of port 3000
+- Root cause was orphaned `next-server` processes still running and occupying ports 3000-3005
+- Fixed by:
+  1. Identifying and killing all orphaned `next-server` processes with `pkill -f next-server`
+  2. Verifying ports were free with `netstat -tulpn | grep :3000`
+  3. Restarting the dev server which now correctly starts on port 3000
+- Added comprehensive troubleshooting guide in `troubleshooting-port-issue.md`
+- Updated `ad_hoc.md` with detailed information about the port issue and fix
+- Created `port-issue-fix.md` with step-by-step instructions for resolving port issues
+
 ## NPM Workspace Error and Service Startup Issues
 
 - Encountered npm workspace error: `npm error code ENOWORKSPACES` when running `npm run dev`

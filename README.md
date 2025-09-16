@@ -51,11 +51,7 @@ This is a monorepo organized into the following directories:
 
 3. Start required services:
    ```bash
-   # Check if Docker is properly installed
-   npm run docker:check
-   
-   # Start services
-   npm run docker:start
+   docker compose up -d
    ```
 
 4. Configure environment variables:
@@ -75,45 +71,7 @@ This is a monorepo organized into the following directories:
    npm run dev
    ```
    
-   The Next.js frontend will be available at `http://localhost:3000`
-
-### Option 2: Without Docker (Manual Installation)
-
-If you prefer not to use Docker, you can install the required services manually:
-
-1. Install the required services:
-   - PostgreSQL: https://www.postgresql.org/download/
-   - Redis: https://redis.io/download/
-   - Neo4j: https://neo4j.com/download/
-   - Kafka: https://kafka.apache.org/quickstart
-
-2. Configure each service according to the connection details in `docker-compose.yml`:
-   - PostgreSQL: localhost:5432
-   - Redis: localhost:6379
-   - Neo4j: localhost:7474 (browser), localhost:7687 (Bolt)
-   - Kafka: localhost:9092
-
-3. Install dependencies:
-   ```bash
-   npm install
-   ```
-
-4. Set up the database:
-   ```bash
-   # This script will create the database and user
-   npm run db:setup
-   ```
-
-5. Configure environment variables:
-   ```bash
-   cp .env.example .env
-   ```
-   Update the database connection details in the `.env` file to match your local installations.
-
-6. Run the development server:
-   ```bash
-   npm run dev
-   ```
+   The Next.js frontend will be available at `http://localhost:3000` and the API Gateway at `http://localhost:4000`
 
 ## Documentation
 

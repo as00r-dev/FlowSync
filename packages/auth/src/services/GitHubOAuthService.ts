@@ -48,6 +48,8 @@ export class GitHubOAuthService {
         }
       );
 
+      console.log('GitHub exchangeCodeForToken response:', response.data);
+
       if (response.data.error) {
         throw new Error(`GitHub API error: ${response.data.error_description}`);
       }
@@ -81,6 +83,9 @@ export class GitHubOAuthService {
           Authorization: `Bearer ${accessToken}`,
         },
       });
+
+      console.log('GitHub getUserInfo response:', response.data);
+      console.log('Access token used for getUserInfo:', accessToken);
 
       return {
         id: response.data.id,
