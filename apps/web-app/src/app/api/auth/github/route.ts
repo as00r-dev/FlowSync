@@ -1,6 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { GitHubOAuthService } from '@flowsync/auth'
 
+// Force the use of Node.js runtime instead of edge runtime
+export const runtime = 'nodejs'
+
 export async function GET(request: NextRequest) {
   try {
     const oauthService = new GitHubOAuthService()

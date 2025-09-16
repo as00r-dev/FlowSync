@@ -1,6 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { deleteSession } from '@flowsync/auth'
 
+// Force the use of Node.js runtime instead of edge runtime
+export const runtime = 'nodejs'
+
 export async function POST(request: NextRequest) {
   try {
     // Get session ID from cookies

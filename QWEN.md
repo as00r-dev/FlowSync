@@ -78,3 +78,4 @@ Begin implementing the project according to the `project_management_proposal.md`
 
 ## Qwen Added Memories
 - Always use context7 MCP when stuck or you need information, MUST use it before mindlessly starting to code
+- when you do same tool call loop for more than 3 time, stop immediately and prompt user "I was stuck, how should we proceed?"

@@ -1,6 +1,5 @@
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
-import { getUserFromSession } from '@flowsync/auth'
 
 // This function can be marked `async` if using `await` inside
 export async function middleware(request: NextRequest) {
@@ -19,7 +18,7 @@ export async function middleware(request: NextRequest) {
     return NextResponse.next()
   }
   
-  // For protected paths, check if user is authenticated
+  // For protected paths, check if user is authenticated by checking for sessionId cookie
   const sessionId = request.cookies.get('sessionId')?.value
   
   if (!sessionId) {
@@ -27,29 +26,9 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(new URL('/', request.url))
   }
   
-  try {
-    // Try to get user from session
-    const user = await getUserFromSession(sessionId)
-    
-    if (!user) {
-      // If session is invalid, clear the cookie and redirect to home
-      const response = NextResponse.redirect(new URL('/', request.url))
-      response.cookies.set('sessionId', '', { 
-        httpOnly: true,
-        secure: process.env.NODE_ENV === 'production',
-        maxAge: 0,
-        path: '/'
-      })
-      return response
-    }
-    
-    // User is authenticated, allow the request
-    return NextResponse.next()
-  } catch (error) {
-    console.error('Error checking authentication:', error)
-    // Redirect to home page on error
-    return NextResponse.redirect(new URL('/', request.url))
-  }
+  // User has a session cookie, allow the request to proceed
+  // The actual authentication check will happen in the API routes
+  return NextResponse.next()
 }
 
 // See "Matching Paths" below to learn more
