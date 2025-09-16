@@ -33,13 +33,13 @@ router.get('/github/callback', async (req, res) => {
     (req.session as any).user = user;
     
     // Redirect to frontend app
-    const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:5173';
+    const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:3000';
     res.redirect(frontendUrl);
   } catch (error: any) {
     console.error('Error handling GitHub OAuth callback:', error);
     
     // Redirect to frontend with error parameter
-    const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:5173';
+    const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:3000';
     res.redirect(`${frontendUrl}?error=oauth_failed&message=${encodeURIComponent(error.message || 'Unknown error')}`);
   }
 });

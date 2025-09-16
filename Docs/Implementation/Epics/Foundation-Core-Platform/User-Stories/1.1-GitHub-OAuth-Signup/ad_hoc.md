@@ -86,3 +86,16 @@ This file will track any ad hoc decisions, change requests, or unexpected issues
   2. Verifying ports were free with `netstat -tulpn | grep :3000`
   3. Restarting the dev server which now correctly starts on port 3000
 - Added troubleshooting documentation for future reference
+
+## NPM Workspace Error and Service Startup Issues
+
+- Encountered npm workspace error: `npm error code ENOWORKSPACES` when running `npm run dev`
+- Also encountered port conflicts where API Gateway was failing to start on port 4000
+- Root causes:
+  1. NPM workspace error due to newer npm version (11.6.0) not supporting workspace commands properly
+  2. Port conflicts from orphaned processes still occupying ports 3000 and 4000
+- Fixed by:
+  1. Cleaning up orphaned processes using `lsof -ti:3000,3001,4000 | xargs kill -9` and `pkill` commands
+  2. Verified services are actually starting correctly despite npm workspace error
+  3. Documented workaround and long-term prevention strategies
+- Added comprehensive troubleshooting guide for npm workspace issues
