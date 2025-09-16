@@ -85,58 +85,17 @@ This file will track any ad hoc decisions, change requests, or unexpected issues
   1. Identifying and killing all orphaned next-server processes with `pkill -f next-server`
   2. Verifying ports were free with `netstat -tulpn | grep :3000`
   3. Restarting the dev server which now correctly starts on port 3000
-- Added troubleshooting documentation for future reference
-
-## Project Configuration Updates for ES Modules
-
-- Updated project to use ES modules instead of CommonJS
-- Modified package.json files to include `"type": "module"` for all packages
-- Updated TypeScript configuration to use ESNext modules
-- Updated build scripts to properly handle ES module compilation
-- Modified import paths to use `.js` extensions as required by ES modules
-- Updated tsconfig.json files to include composite builds and references
-- Fixed database test script to use relative imports instead of package imports
-- Updated GitHub OAuth service to include better error handling and logging
-
-## Next.js Dev Server Port Issue Resolution
-
-- Encountered persistent issue where `npm run dev` was starting on port 3004 instead of port 3000
-- Root cause was orphaned `next-server` processes still running and occupying ports 3000-3005
-- Fixed by:
-  1. Identifying and killing all orphaned `next-server` processes with `pkill -f next-server`
-  2. Verifying ports were free with `netstat -tulpn | grep :3000`
-  3. Restarting the dev server which now correctly starts on port 3000
 - Added comprehensive troubleshooting guide in `troubleshooting-port-issue.md`
 - Updated `ad_hoc.md` with detailed information about the port issue and fix
 - Created `port-issue-fix.md` with step-by-step instructions for resolving port issues
 
-## Docker Compose Configuration Updates
+## TypeScript Configuration Issue and Fix
 
-- Updated Docker Compose configuration to use `docker compose` instead of `docker-compose`
-- Added `--build` flag to ensure fresh builds when starting services
-- Updated GitHub OAuth callback URL to use API Gateway port (4000) instead of web app port (3000)
-- Added proper environment variable configuration for all services
-- Ensured `docker-compose.yml` uses `env_file: ./.env` for services that need environment variables
-- Updated documentation to clarify that API Gateway runs on port 4000 and handles GitHub OAuth callbacks
-
-## GitHub OAuth Service Enhancements
-
-- Added comprehensive logging to GitHubOAuthService for debugging
-- Improved error handling with try/catch blocks for database operations
-- Updated GitHub redirect URI to correctly point to API Gateway endpoint
-- Added validation for GitHub user information before creating/updating users
-- Implemented better error messages for OAuth failures
-- Added debugging information to help troubleshoot OAuth issues
-
-## NPM Workspace Error and Service Startup Issues
-
-- Encountered npm workspace error: `npm error code ENOWORKSPACES` when running `npm run dev`
-- Also encountered port conflicts where API Gateway was failing to start on port 4000
-- Root causes:
-  1. NPM workspace error due to newer npm version (11.6.0) not supporting workspace commands properly
-  2. Port conflicts from orphaned processes still occupying ports 3000 and 4000
+- Encountered issue with `allowImportingTsExtensions` option causing compilation errors
+- Root cause was missing `noEmit: true` in tsconfig.base.json when using `allowImportingTsExtensions`
 - Fixed by:
-  1. Cleaning up orphaned processes using `lsof -ti:3000,3001,4000 | xargs kill -9` and `pkill` commands
-  2. Verified services are actually starting correctly despite npm workspace error
-  3. Documented workaround and long-term prevention strategies
-- Added comprehensive troubleshooting guide for npm workspace issues
+  1. Adding `noEmit: true` to tsconfig.base.json
+  2. Removing conflicting `allowImportingTsExtensions` override in apps/api-gateway/tsconfig.build.json
+  3. Ensuring all tsconfig files properly inherit from the base configuration
+- Verified fix by successfully compiling the project with no errors
+- Added comprehensive documentation in `troubleshooting-port-issue.md` for future reference
