@@ -1,5 +1,14 @@
 #!/bin/bash
 
+# Function to check if user is in docker group
+check_docker_permission() {
+    if groups $USER | grep -q docker; then
+        return 0
+    else
+        return 1
+    fi
+}
+
 # Check if Docker is installed
 if ! command -v docker &> /dev/null
 then
@@ -10,7 +19,8 @@ then
     echo "For Ubuntu/Debian:"
     echo "  sudo apt update"
     echo "  sudo apt install docker.io docker-compose"
-    echo "  sudo usermod -aG docker \$USER"
+    echo "  sudo usermod -aG docker $USER"
+    echo "  # Then log out and log back in, or run: newgrp docker"
     echo ""
     echo "For other systems, follow the official Docker installation guide:"
     echo "  https://docs.docker.com/get-docker/"
@@ -23,6 +33,22 @@ then
     echo "  - Redis"
     echo "  - Neo4j"
     echo "  - Kafka"
+    exit 1
+fi
+
+# Check Docker permissions
+if ! docker info &> /dev/null
+then
+    echo "Docker is installed but you don't have permission to use it."
+    echo ""
+    echo "To fix this, run:"
+    echo "  sudo usermod -aG docker $USER"
+    echo ""
+    echo "Then either:"
+    echo "  1. Log out and log back in, or"
+    echo "  2. Run: newgrp docker"
+    echo ""
+    echo "After that, try running this script again."
     exit 1
 fi
 
