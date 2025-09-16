@@ -11,7 +11,9 @@
     "dev": "turbo run dev",
     "lint": "turbo run lint",
     "test": "turbo run test",
-    "format": "prettier --write ."
+    "format": "prettier --write .",
+    "docker:check": "bash ./scripts/check-docker.sh",
+    "docker:start": "bash ./scripts/start-services.sh"
   },
   "devDependencies": {
     "turbo": "^1.10.0",

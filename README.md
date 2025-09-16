@@ -32,17 +32,29 @@ This is a monorepo organized into the following directories:
 
 ## Development Setup
 
-1. Install dependencies:
+### Option 1: Using Docker (Recommended)
+
+1. Install Docker and Docker Compose:
+   - For Ubuntu/Debian:
+     ```bash
+     sudo apt update
+     sudo apt install docker.io docker-compose
+     sudo usermod -aG docker $USER
+     ```
+   - For other systems, follow the official Docker installation guide:
+     https://docs.docker.com/get-docker/
+
+2. Install dependencies:
    ```bash
    npm install
    ```
 
-2. Start required services:
+3. Start required services:
    ```bash
    docker-compose up -d
    ```
 
-3. Configure environment variables:
+4. Configure environment variables:
    Copy the `.env.example` file to `.env` and update the values as needed:
    ```bash
    cp .env.example .env
@@ -54,12 +66,44 @@ This is a monorepo organized into the following directories:
    - Set Authorization callback URL to `http://localhost:3000/api/auth/github/callback`
    - Update the `GITHUB_CLIENT_ID` and `GITHUB_CLIENT_SECRET` in your `.env` file
 
-4. Run the development server:
+5. Run the development server:
    ```bash
    npm run dev
    ```
    
    The Next.js frontend will be available at `http://localhost:3000`
+
+### Option 2: Without Docker (Manual Installation)
+
+If you prefer not to use Docker, you can install the required services manually:
+
+1. Install the required services:
+   - PostgreSQL: https://www.postgresql.org/download/
+   - Redis: https://redis.io/download/
+   - Neo4j: https://neo4j.com/download/
+   - Kafka: https://kafka.apache.org/quickstart
+
+2. Configure each service according to the connection details in `docker-compose.yml`:
+   - PostgreSQL: localhost:5432
+   - Redis: localhost:6379
+   - Neo4j: localhost:7474 (browser), localhost:7687 (Bolt)
+   - Kafka: localhost:9092
+
+3. Install dependencies:
+   ```bash
+   npm install
+   ```
+
+4. Configure environment variables:
+   ```bash
+   cp .env.example .env
+   ```
+   Update the database connection details in the `.env` file to match your local installations.
+
+5. Run the development server:
+   ```bash
+   npm run dev
+   ```
 
 ## Documentation
 
