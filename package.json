@@ -13,7 +13,8 @@
     "test": "turbo run test",
     "format": "prettier --write .",
     "docker:check": "bash ./scripts/check-docker.sh",
-    "docker:start": "bash ./scripts/start-services.sh"
+    "docker:start": "bash ./scripts/start-services.sh",
+    "db:setup": "bash ./scripts/setup-db.sh"
   },
   "devDependencies": {
     "turbo": "^1.10.0",
