@@ -1,7 +1,25 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { getUserFromSession } from '@flowsync/auth'
 
 export async function GET(request: NextRequest) {
-  // TODO: Implement user info retrieval with session management for Next.js
-  // For now, we'll return a 401 status to indicate not authenticated
-  return NextResponse.json({ error: 'Not authenticated' }, { status: 401 })
+  try {
+    // Get session ID from cookies
+    const sessionId = request.cookies.get('sessionId')?.value;
+    
+    if (!sessionId) {
+      return NextResponse.json({ error: 'Not authenticated' }, { status: 401 });
+    }
+    
+    // Get user from session
+    const user = await getUserFromSession(sessionId);
+    
+    if (!user) {
+      return NextResponse.json({ error: 'Not authenticated' }, { status: 401 });
+    }
+    
+    return NextResponse.json({ user });
+  } catch (error: any) {
+    console.error('Error fetching user info:', error);
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+  }
 }

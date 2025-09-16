@@ -41,6 +41,10 @@ export function useAuth() {
     try {
       await apiCall('/api/auth/logout', { method: 'POST' })
       setUser(null)
+      // Redirect to home page after logout
+      if (typeof window !== 'undefined') {
+        window.location.href = '/'
+      }
     } catch (error) {
       console.error('Error logging out:', error)
     }

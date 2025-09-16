@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { GitHubOAuthService } from '@flowsync/auth'
+import { createSession } from '@flowsync/auth'
 
 export async function GET(request: NextRequest) {
   try {
@@ -14,10 +15,20 @@ export async function GET(request: NextRequest) {
     const oauthService = new GitHubOAuthService()
     const user = await oauthService.handleOAuthCallback(code)
     
-    // TODO: Implement session management for Next.js
-    // For now, we'll redirect to the home page
+    // Create a session for the user
+    const session = await createSession(user.id!)
+    
+    // Redirect to the dashboard with session cookie
     const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:3000'
-    return NextResponse.redirect(frontendUrl)
+    const response = NextResponse.redirect(`${frontendUrl}/dashboard`)
+    response.cookies.set('sessionId', session.sid, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      maxAge: 24 * 60 * 60, // 24 hours
+      path: '/'
+    })
+    
+    return response
   } catch (error: any) {
     console.error('Error handling GitHub OAuth callback:', error)
     
