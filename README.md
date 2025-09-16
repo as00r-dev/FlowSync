@@ -51,7 +51,11 @@ This is a monorepo organized into the following directories:
 
 3. Start required services:
    ```bash
-   docker-compose up -d
+   # Check if Docker is properly installed
+   npm run docker:check
+   
+   # Start services
+   npm run docker:start
    ```
 
 4. Configure environment variables:
@@ -94,13 +98,19 @@ If you prefer not to use Docker, you can install the required services manually:
    npm install
    ```
 
-4. Configure environment variables:
+4. Set up the database:
+   ```bash
+   # This script will create the database and user
+   npm run db:setup
+   ```
+
+5. Configure environment variables:
    ```bash
    cp .env.example .env
    ```
    Update the database connection details in the `.env` file to match your local installations.
 
-5. Run the development server:
+6. Run the development server:
    ```bash
    npm run dev
    ```
