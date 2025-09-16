@@ -19,6 +19,17 @@ fi
 echo "Docker is installed."
 echo "Docker version: $(docker --version)"
 
+# Check Docker permissions
+if ! docker info &> /dev/null
+then
+    echo ""
+    echo "WARNING: Docker is installed but you don't have permission to use it."
+    echo "To fix this, run:"
+    echo "  sudo usermod -aG docker $USER"
+    echo "Then either log out and log back in, or run: newgrp docker"
+    exit 1
+fi
+
 # Check if Docker Compose is installed
 if command -v docker-compose &> /dev/null
 then
