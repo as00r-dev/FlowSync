@@ -76,3 +76,13 @@ This file will track any ad hoc decisions, change requests, or unexpected issues
   - Neo4j: HTTP endpoint responding
   - Zookeeper: Running and connected to Kafka
 - The `npm run docker:start` command now works without errors
+
+## Dev Server Port Issue and Fix
+
+- Encountered issue where `npm run dev` was starting on port 3004 instead of port 3000
+- Root cause was orphaned next-server processes still running and occupying the ports
+- Fixed by:
+  1. Identifying and killing all orphaned next-server processes with `pkill -f next-server`
+  2. Verifying ports were free with `netstat -tulpn | grep :3000`
+  3. Restarting the dev server which now correctly starts on port 3000
+- Added troubleshooting documentation for future reference
